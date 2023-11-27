@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new AllExceptionFilter())  
-  app.useGlobalInterceptors(new TimeOutIntersector()) 
+  // app.useGlobalInterceptors(new TimeOutIntersector()) //TODO: Ver que dope
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

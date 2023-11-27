@@ -7,6 +7,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 // import { InjectRepository } from '@nestjs/typeorm';
 import { marca_empre_empresas, marca_usr_usuario } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { ApiResp } from 'src/common/class';
 
 @Injectable()
 export class CompaniesService {

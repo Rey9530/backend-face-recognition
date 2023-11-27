@@ -12,5 +12,6 @@
 ```
 docker-compose.yaml up -d
 ```
-6. Levantar con ```yarn start:dev```
-6. Ejecutar ```http://localhost:3000/api/seed```
+6. Ejecutar ```npx prisma generate```
+7. Levantar con ```yarn start:dev```
+8. Ejecutar ```http://localhost:3000/api/seed```
