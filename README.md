@@ -12,6 +12,6 @@
 ```
 docker-compose.yaml up -d
 ```
-6. Ejecutar ```npx prisma generate```
+6. Ejecutar ```npx prisma migrate dev --name first-migration```
 7. Levantar con ```yarn start:dev```
 8. Ejecutar ```http://localhost:3000/api/seed```
