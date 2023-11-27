@@ -36,7 +36,7 @@ export class UsersService {
 
   }
 
-  async login(createUserDto: CreateAuthDto): Promise<ApiResp<any>> {
+  async login(createUserDto: CreateAuthDto): Promise<any> {
 
     const { password, user_code } = createUserDto;
 
@@ -53,12 +53,12 @@ export class UsersService {
       throw new UnauthorizedException('Credenciales incorrectas');
     delete user.usr_contrasenia;
     delete user.marca_usr_pk;
-    var data = {
+    var data:any = {
       ...user,
       token: this.getJwtToken({ marca_usr_uuid: user.marca_usr_pk })
     };
 
-    return new ApiResp(200, "dd", data);
+    return data;
     // try {
     // } catch (error) {
     //   this.logger.error(error)

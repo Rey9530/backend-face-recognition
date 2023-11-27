@@ -33,13 +33,13 @@ model marca_ubi_ubicacion {
 }
 
 model marca_cn_contratacion {
-  marca_cn_pk       String                @id @default(uuid())
-  cn_nombre         String
-  cn_estado         Estado                @default(ACTIVE)
-  cn_feccrea        DateTime              @default(now())
-  cn_fecmod         DateTime              @default(now()) @db.Timestamptz()
-  cn_usrcrea        String
-  cn_usrmod         String
+  marca_cn_pk         String                @id @default(uuid())
+  cn_nombre           String
+  cn_estado           Estado                @default(ACTIVE)
+  cn_feccrea          DateTime              @default(now())
+  cn_fecmod           DateTime              @default(now()) @db.Timestamptz()
+  cn_usrcrea          String
+  cn_usrmod           String
   marca_emp_empleados marca_emp_empleados[]
 }
 
@@ -76,7 +76,7 @@ model marca_emp_empleados {
   marca_gen_genero      marca_gen_genero        @relation(fields: [marca_emp_gen_fk], references: [marca_gen_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_gen_fk")
   marca_emp_ubi_fk      String
   marca_ubi_ubicacion   marca_ubi_ubicacion     @relation(fields: [marca_emp_ubi_fk], references: [marca_ubi_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_ubi_fk")
-  marca_emp_cn_fk     String
+  marca_emp_cn_fk       String
   marca_cn_contratacion marca_cn_contratacion   @relation(fields: [marca_emp_cn_fk], references: [marca_cn_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_tipc_fk")
   marca_asig_asignacion marca_asig_asignacion[]
 }

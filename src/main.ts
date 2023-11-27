@@ -3,14 +3,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { TimeOutIntersector } from './common/intersectors';
-import { AllExceptionFilter } from './common/filters';
+import { TimeOutIntersector, TransformInterceptor } from './common/intersectors';
+import { AllExceptionFilter } from './common/filters'; 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new AllExceptionFilter())  
-  // app.useGlobalInterceptors(new TimeOutIntersector()) //TODO: Ver que dope
+  app.useGlobalInterceptors(new TransformInterceptor()) //TODO: Ver que dope
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
