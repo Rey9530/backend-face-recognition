@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model marca_gen_genero {
+  marca_gen_pk        String                @id @default(uuid())
+  gen_nombre          String
+  gen_estado          Estado                @default(ACTIVE)
+  gen_feccrea         DateTime              @default(now()) @db.Timestamptz()
+  gen_fecmod          DateTime              @default(now()) @db.Timestamptz()
+  gen_usrcrea         String
+  gen_usrmod          String
+  marca_emp_empleados marca_emp_empleados[]
+}
+
+model marca_ubi_ubicacion {
+  marca_ubi_pk        String                @id @default(uuid())
+  ubi_nombre          String
+  ubi_estado          Estado                @default(ACTIVE)
+  ubi_feccrea         DateTime              @default(now()) @db.Timestamptz()
+  ubi_fecmod          DateTime              @default(now()) @db.Timestamptz()
+  ubi_usrcrea         String
+  ubi_usrmod          String
+  marca_emp_empleados marca_emp_empleados[]
+}
+
+model marca_cn_contratacion {
+  marca_cn_pk       String                @id @default(uuid())
+  cn_nombre         String
+  cn_estado         Estado                @default(ACTIVE)
+  cn_feccrea        DateTime              @default(now())
+  cn_fecmod         DateTime              @default(now()) @db.Timestamptz()
+  cn_usrcrea        String
+  cn_usrmod         String
+  marca_emp_empleados marca_emp_empleados[]
+}
+
+model marca_empre_empresas {
+  marca_empre_pk          String                @id @default(uuid())
+  empre_nombre            String
+  empre_direccion         String
+  empre_contacto_nombre   String
+  empre_contacto_correo   String
+  empre_contacto_telefono String
+  empre_usrcrea           String
+  empre_usrmod            String
+  empre_feccrea           DateTime              @default(now())
+  empre_fecmod            DateTime              @default(now()) @db.Timestamptz()
+  empre_estado            Estado                @default(ACTIVE)
+  marca_empre_usr_fk      String
+  marca_usr_usuario       marca_usr_usuario     @relation(fields: [marca_empre_usr_fk], references: [marca_usr_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_empre_usr_fk")
+  marca_proy_proyecto     marca_proy_proyecto[]
+}
+
+model marca_emp_empleados {
+  marca_emp_pk          String                  @id @default(uuid())
+  emp_codigo            String
+  emp_fecha_nacimiento  DateTime
+  emp_nombres           String
+  emp_apellidos         String
+  emp_estado            Estado                  @default(ACTIVE)
+  marca_emp_empre_fk    String
+  emp_feccrea           DateTime                @default(now())
+  emp_fecmod            DateTime                @default(now()) @db.Timestamptz()
+  emp_usrcrea           String
+  emp_usrmod            String
+  marca_emp_gen_fk      String
+  marca_gen_genero      marca_gen_genero        @relation(fields: [marca_emp_gen_fk], references: [marca_gen_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_gen_fk")
+  marca_emp_ubi_fk      String
+  marca_ubi_ubicacion   marca_ubi_ubicacion     @relation(fields: [marca_emp_ubi_fk], references: [marca_ubi_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_ubi_fk")
+  marca_emp_cn_fk     String
+  marca_cn_contratacion marca_cn_contratacion   @relation(fields: [marca_emp_cn_fk], references: [marca_cn_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_emp_tipc_fk")
+  marca_asig_asignacion marca_asig_asignacion[]
+}
+
+model marca_usr_usuario {
+  marca_usr_pk         String                 @id @default(uuid())
+  usr_codigo           String
+  usr_nombres          String
+  usr_apellidos        String
+  usr_contrasenia      String
+  usr_estado           Estado                 @default(ACTIVE)
+  usr_feccrea          DateTime               @default(now())
+  usr_fecmod           DateTime               @default(now()) @db.Timestamptz()
+  usr_usrcrea          String
+  usr_usrmod           String
+  marca_empre_empresas marca_empre_empresas[]
+}
+
+model marca_proy_proyecto {
+  marca_proy_pk         String                  @id @default(uuid())
+  proy_nombre           String
+  proy_numero_contrato  String
+  proy_fecha_inicio     DateTime
+  proy_fecha_fin        DateTime
+  proy_estado           Estado                  @default(ACTIVE)
+  proy_feccrea          DateTime                @default(now())
+  proy_fecmod           DateTime                @default(now()) @db.Timestamptz()
+  proy_usrcrea          String
+  proy_usrmod           String
+  marca_proy_empre_fk   String
+  marca_empre_empresas  marca_empre_empresas    @relation(fields: [marca_proy_empre_fk], references: [marca_empre_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_proy_empre_fk")
+  marca_asig_asignacion marca_asig_asignacion[]
+}
+
+model marca_asig_asignacion {
+  marca_asig_pk       String                @id @default(uuid())
+  asig_hora_inicio    DateTime
+  asig_hora_fin       DateTime
+  proy_estado         Estado                @default(ACTIVE)
+  asig_feccrea        DateTime              @default(now())
+  asig_fecmod         DateTime              @default(now()) @db.Timestamptz()
+  asig_usrcrea        String
+  asig_usrmod         String
+  marca_asig_proy_fk  String
+  marca_proy_proyecto marca_proy_proyecto   @relation(fields: [marca_asig_proy_fk], references: [marca_proy_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_asig_proy_fk")
+  marca_asig_emp_fk   String
+  marca_emp_empleados marca_emp_empleados   @relation(fields: [marca_asig_emp_fk], references: [marca_emp_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_asig_emp_fk")
+  marca_his_historial marca_his_historial[]
+}
+
+model marca_his_historial {
+  marca_histm_pk        String                @id @default(uuid())
+  histm_marca           DateTime
+  emp_estado            Estado                @default(ACTIVE)
+  marca_histm_usr_fk    String
+  histm_feccrea         DateTime              @default(now())
+  histm_fecmod          DateTime              @default(now()) @db.Timestamptz()
+  histm_usrcrea         String
+  histm_usrmod          String
+  marca_histm_asig_fk   String
+  marca_asig_asignacion marca_asig_asignacion @relation(fields: [marca_histm_asig_fk], references: [marca_asig_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_histm_asig_fk")
+}
+
+enum Estado {
+  ACTIVE
+  INACTIVE
+}
