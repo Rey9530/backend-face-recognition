@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param, Delete, ParseUUIDPipe, Put, } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { Auth, GetUser } from 'src/users/decorators';
 import { CreateAuthDto, CreateUserDto, UpdateUserDto } from './dto';
-import { marca_usr_usuario } from '@prisma/client';
-// import { MarcaUsrUsuario } from './entities/user.entity';
+import { marca_usr_usuario } from '@prisma/client'; 
+import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
 
 @ApiTags('Users')
@@ -21,6 +21,7 @@ export class UsersController {
 
   @Get('check-status')
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   checkStatus(@GetUser() user: marca_usr_usuario) {
     return this.usersService.checkStatus(user);
   }
@@ -28,38 +29,38 @@ export class UsersController {
 
   @Post()
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   create(
     @Body() createUserDto: CreateUserDto,
     @GetUser() user: marca_usr_usuario
   ) {
     return this.usersService.create(createUserDto, user);
-  } 
-  // create2(
-  //   @Body() createUserDto: CreateUserDto, 
-  // ) {
-  //   return this.usersService.create2(createUserDto);
-  // }
+  }
 
   @Get()
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(`${id}`);
   }
 
   @Put(':id')
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(`${id}`, updateUserDto);
   }
 
   @Delete(':id')
   @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(`${id}`);
   }

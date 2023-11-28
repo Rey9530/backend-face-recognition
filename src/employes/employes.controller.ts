@@ -7,20 +7,21 @@ import {
   Param,
   Delete,
   Put,
-  ParseUUIDPipe,
-  Header,
+  ParseUUIDPipe, 
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { EmployesService } from './employes.service';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
 import { marca_usr_usuario } from '@prisma/client';
-import { Auth, GetUser } from 'src/users/decorators';
+import { Auth, GetUser } from 'src/users/decorators'; 
+import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
 @ApiTags('Employes')
 @Auth()
 @Controller('v1/employes')
+@ApiBearerAuth(HEADER_API_BEARER_AUTH)
 export class EmployesController {
   constructor(private readonly employesService: EmployesService) {}
 

@@ -1,1 +1,1 @@
-export { FORMAT_FECHA_YYYY_MM_DD } from "./regrex"
+export { FORMAT_FECHA_YYYY_MM_DD,HEADER_API_BEARER_AUTH } from "./regrex"

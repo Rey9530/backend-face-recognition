@@ -2,14 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Put }
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/users/decorators';
-import { marca_usr_usuario } from '@prisma/client';
+import { marca_usr_usuario } from '@prisma/client'; 
+import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 // import { MarcaUsrUsuario } from 'src/users/entities/user.entity';
 
 @ApiTags('Companies')
 @Controller('v1/companies') 
 @Auth()
+@ApiBearerAuth(HEADER_API_BEARER_AUTH)
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) { }
 

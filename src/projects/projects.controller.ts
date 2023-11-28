@@ -11,13 +11,15 @@ import {
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/users/decorators';
-import { marca_usr_usuario } from '@prisma/client';
+import { marca_usr_usuario } from '@prisma/client'; 
+import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
 @ApiTags('Projects')
-@Auth()
 @Controller('v1/projects')
+@Auth()
+@ApiBearerAuth(HEADER_API_BEARER_AUTH)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
