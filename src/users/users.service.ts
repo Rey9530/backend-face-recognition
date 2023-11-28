@@ -4,8 +4,7 @@ import { CreateAuthDto, CreateUserDto, UpdateUserDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces';
 import { marca_usr_usuario } from '@prisma/client';
-import { PrismaService } from 'src/common/services';
-import { ApiResp } from 'src/common/class';
+import { PrismaService } from 'src/common/services'; 
 
 @Injectable()
 export class UsersService {
@@ -58,13 +57,7 @@ export class UsersService {
       token: this.getJwtToken({ marca_usr_uuid: user.marca_usr_pk })
     };
 
-    return data;
-    // try {
-    // } catch (error) {
-    //   this.logger.error(error)
-    //   throw new InternalServerErrorException('Ha ocurrido un error favor intentarlo mas tarde');
-
-    // }
+    return data; 
   }
 
   async checkStatus(user: any) {
@@ -101,6 +94,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    await this.findOne(id);
     try {
       const { usr_contrasenia, ...resto } = updateUserDto;
       var data: any = {
@@ -138,8 +132,7 @@ export class UsersService {
     if (error.code === '23505')
       throw new BadRequestException(error.detail);
 
-    this.logger.error(error)
-    // console.log(error)
+    this.logger.error(error) 
     throw new InternalServerErrorException('Unexpected error, check server logs');
 
   }

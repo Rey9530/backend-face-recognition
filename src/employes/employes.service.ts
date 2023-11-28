@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
 import { PrismaService } from 'src/common/services';
-import { marca_emp_empleados, marca_usr_usuario, marca_empre_empresas } from '@prisma/client';
+import { marca_usr_usuario } from '@prisma/client';
 
 @Injectable()
 export class EmployesService {
@@ -49,7 +49,7 @@ export class EmployesService {
   }
 
   async findOne(id: string) {
-    return await this.prisma.marca_emp_empleados.findMany({
+    var respDb =  await this.prisma.marca_emp_empleados.findMany({
       where: { emp_estado: 'ACTIVE', marca_emp_pk: id, },
       include: {
         marca_gen_genero: true,
@@ -58,6 +58,9 @@ export class EmployesService {
         marca_ubi_ubicacion: true,
       }
     });
+    if (!respDb)
+      throw new NotFoundException(`Regisro no encontrado`);
+    return respDb;
   }
 
   async update(
@@ -65,6 +68,7 @@ export class EmployesService {
     updateEmployeDto: UpdateEmployeDto,
     user: marca_usr_usuario,
   ) {
+    await this.findOne(id);
     var data: any = {
       marca_emp_gen_fk: updateEmployeDto.marca_emp_gen,
       marca_emp_ubi_fk: updateEmployeDto.marca_emp_ubi,
@@ -88,9 +92,10 @@ export class EmployesService {
   }
 
   async remove(id: string, user: marca_usr_usuario) {
+    await this.findOne(id);
     try {
       const register = await this.prisma.marca_emp_empleados.update({
-        where: { marca_emp_pk: id },
+        where: { marca_emp_pk: id , emp_estado:'ACTIVE'},
         data: {
           emp_estado: 'INACTIVE',
           emp_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,

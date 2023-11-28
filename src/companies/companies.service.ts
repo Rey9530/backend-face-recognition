@@ -15,10 +15,7 @@ export class CompaniesService {
   private readonly logger = new Logger('CompaniesService');
   constructor(
     private prisma: PrismaService,
-  ) {
-
-
-  }
+  ) { }
   async create(createCompanyDto: CreateCompanyDto, user: marca_usr_usuario) {
 
     try {
@@ -56,6 +53,7 @@ export class CompaniesService {
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: marca_usr_usuario) {
+    await this.findOne(id);
     try {
       const userFullName = user.usr_nombres + " " + user.usr_apellidos;
       var data: any = {
@@ -76,6 +74,7 @@ export class CompaniesService {
   }
 
   async remove(id: string, user: marca_usr_usuario) {
+    await this.findOne(id);
     try {
       const userFullName = user.usr_nombres + " " + user.usr_apellidos;
       const RespDb = await this.prisma.marca_empre_empresas.update({
