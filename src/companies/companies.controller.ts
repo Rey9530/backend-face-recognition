@@ -5,8 +5,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/users/decorators';
 import { marca_usr_usuario } from '@prisma/client'; 
-import { HEADER_API_BEARER_AUTH } from 'src/common/const';
-// import { MarcaUsrUsuario } from 'src/users/entities/user.entity';
+import { HEADER_API_BEARER_AUTH } from 'src/common/const'; 
 
 @ApiTags('Companies')
 @Controller('v1/companies') 

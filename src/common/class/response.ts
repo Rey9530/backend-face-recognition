@@ -9,8 +9,4 @@ export class ApiResp<T> {
         this.data = data;
     }
  
-}
-
-// function apiResp<T>(arg: T): T {
-//     return arg;
-// }
+} 

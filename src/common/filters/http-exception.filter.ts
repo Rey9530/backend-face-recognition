@@ -29,8 +29,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       time: new Date().toISOString(),
       path: request.url,
       data: typeof msg.message == 'string' ? msg.message : [...msg.message],
-      message: msg.message.toString(),
-      // extra:msg,
+      message: msg.message.toString(), 
       status: msg.statusCode,
     });
   }

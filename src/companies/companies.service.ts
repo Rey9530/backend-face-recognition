@@ -1,10 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
-// import { MarcaUsrUsuario } from 'src/users/entities/user.entity';
-// import { MarcaEmpreEmpresas, RecordStatus } from './entities/company.entity';
-// import { Repository } from 'typeorm';
-// import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateCompanyDto } from './dto/update-company.dto'; 
 import { marca_empre_empresas, marca_usr_usuario } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { ApiResp } from 'src/common/class';
