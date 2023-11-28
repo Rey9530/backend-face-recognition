@@ -21,7 +21,7 @@ import { SeedModule } from './seed/seed.module';
     //   autoLoadEntities:true,
     //   synchronize:false,
     // }),
-    // CompaniesModule,
+    CompaniesModule,
     UsersModule,
     EmployesModule,
     ProjectsModule,

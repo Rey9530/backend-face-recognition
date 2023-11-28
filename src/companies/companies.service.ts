@@ -14,9 +14,6 @@ export class CompaniesService {
 
   private readonly logger = new Logger('CompaniesService');
   constructor(
-    // @InjectRepository(MarcaEmpreEmpresas)
-    // private readonly dbRepository: Repository<MarcaEmpreEmpresas>,
-
     private prisma: PrismaService,
   ) {
 
@@ -27,18 +24,23 @@ export class CompaniesService {
     try {
       const userFullName = user.usr_nombres + " " + user.usr_apellidos;
       var data: any = {
-        ...createCompanyDto,
+        marca_empre_usr_fk: user.marca_usr_pk,
+        empre_nombre: createCompanyDto.empre_nombre,
+        empre_direccion: createCompanyDto.empre_direccion,
+        empre_contacto_nombre: createCompanyDto.empre_contacto_nombre,
+        empre_contacto_correo: createCompanyDto.empre_contacto_correo,
+        empre_contacto_telefono: createCompanyDto.empre_contacto_telefono,
         empre_usrcrea: userFullName,
         empre_usrmod: userFullName,
-        marca_empre_usr_fk: user
       }
-      const register = await this.prisma.marca_empre_empresas.create(data);
+      const register = await this.prisma.marca_empre_empresas.create({ data });
       delete register.marca_empre_usr_fk;
-      return new ApiResp(200, "dd", register);
+      return register;
     } catch (error) {
       this.logger.error(error)
       if (error.code === '23505')
         throw new BadRequestException(error.detail);
+      return error;
     }
   }
 
@@ -64,6 +66,7 @@ export class CompaniesService {
         where: { marca_empre_pk: id },
         data
       });
+      delete RespDb.marca_empre_usr_fk;
       if (!RespDb) throw new NotFoundException(`Empresa no encontrada`);
       return RespDb;
     } catch (error) {
