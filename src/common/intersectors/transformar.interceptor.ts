@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 
 export interface Response<T> {
   data: T;
-  statusCode: number;
+  status: number;
   message: string;
 }
 
@@ -22,16 +22,12 @@ export class TransformInterceptor<T>
     next: CallHandler,
   ): Observable<Response<T>> {
     const statusCode = context.switchToHttp().getRequest().res.statusCode;
-    // const body = context.switchToHttp().getResponse();
-    // console.log(body);
     return next.handle().pipe(
       map((data) => ({
         data,
-        statusCode: statusCode,
+        status: statusCode,
         message: 'Success',
       })),
     );
   }
 }
-
-// statusCode

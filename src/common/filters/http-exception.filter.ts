@@ -31,7 +31,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       data: typeof msg.message == 'string' ? msg.message : [...msg.message],
       message: msg.message.toString(),
       // extra:msg,
-      statusCode: msg.statusCode,
+      status: msg.statusCode,
     });
   }
 }
