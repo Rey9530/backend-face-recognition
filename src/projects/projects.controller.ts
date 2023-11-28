@@ -1,18 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body, 
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Put,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+import { Auth, GetUser } from 'src/users/decorators';
+import { marca_usr_usuario } from '@prisma/client';
 
 @ApiTags('Projects')
+@Auth()
 @Controller('v1/projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @GetUser() user: marca_usr_usuario,
+  ) {
+    return this.projectsService.create(createProjectDto, user);
   }
 
   @Get()
@@ -21,17 +35,22 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
+  @Put(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+    @GetUser() user: marca_usr_usuario,
+  ) {
+    return this.projectsService.update(id, updateProjectDto,user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,) {
+    return this.projectsService.remove(id);
   }
 }

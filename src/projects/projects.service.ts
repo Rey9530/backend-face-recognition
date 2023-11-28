@@ -1,26 +1,116 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { PrismaService } from 'src/common/services';
+import { marca_proy_proyecto, marca_usr_usuario } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  private readonly logger = new Logger('EmployesService');
+
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(createProjectDto: CreateProjectDto, user: marca_usr_usuario) {
+    var proy_fecha_inicio = new Date(createProjectDto.proy_fecha_inicio);
+    var proy_fecha_fin = new Date(createProjectDto.proy_fecha_fin);
+
+    proy_fecha_fin.setHours(proy_fecha_fin.getHours() + 23);
+    proy_fecha_fin.setMinutes(proy_fecha_fin.getMinutes() + 59);
+    if (proy_fecha_inicio.getTime() > proy_fecha_fin.getTime()) {
+      throw new InternalServerErrorException(
+        'Las fecha de inicio del proyecto no debe ser mayor a la fecha final',
+      );
+    }
+    try {
+      var data: any = {
+        proy_nombre: createProjectDto.proy_nombre,
+        proy_numero_contrato: createProjectDto.proy_numero_contrato,
+        proy_fecha_inicio,
+        proy_fecha_fin,
+        proy_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
+        proy_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
+        marca_proy_empre_fk: createProjectDto.marca_proy_empre,
+      };
+      return await this.prisma.marca_proy_proyecto.create({ data });
+    } catch (error) {
+      return error;
+    }
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  async findAll() {
+    try {
+      return await this.prisma.marca_proy_proyecto.findMany({
+        where: { proy_estado: 'ACTIVE' },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: string) {
+    try {
+      var respDb = await this.prisma.marca_proy_proyecto.findFirst({
+        where: { marca_proy_pk: id,  proy_estado:'ACTIVE' },
+      });
+    } catch (error) {
+      return error;
+    }
+
+    if (!respDb) throw new NotFoundException('Registro no encontrado');
+    return respDb;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    user: marca_usr_usuario,
+  ) {
+    await this.findOne(id);
+    var proy_fecha_inicio = new Date(updateProjectDto.proy_fecha_inicio);
+    var proy_fecha_fin = new Date(updateProjectDto.proy_fecha_fin); 
+    proy_fecha_fin.setHours(proy_fecha_fin.getHours() + 23);
+    proy_fecha_fin.setMinutes(proy_fecha_fin.getMinutes() + 59);
+    if (proy_fecha_inicio.getTime() > proy_fecha_fin.getTime()) {
+      throw new InternalServerErrorException(
+        'Las fecha de inicio del proyecto no debe ser mayor a la fecha final',
+      );
+    }
+    try {
+      var data: any = {
+        proy_nombre: updateProjectDto.proy_nombre,
+        proy_numero_contrato: updateProjectDto.proy_numero_contrato,
+        proy_fecha_inicio,
+        proy_fecha_fin,
+        proy_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
+        marca_proy_empre_fk: updateProjectDto.marca_proy_empre,
+      };
+      var respDb = await this.prisma.marca_proy_proyecto.update({
+        where: { marca_proy_pk: id, proy_estado: 'ACTIVE' },
+        data,
+      });
+      if (!respDb) throw new NotFoundException('Registro no encontrado');
+      return respDb;
+    } catch (error) {
+      return error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: string) {
+    await this.findOne(id);
+    try {
+      var data: any = { proy_estado: 'INACTIVE' };
+      var respDb = await this.prisma.marca_proy_proyecto.update({
+        where: { marca_proy_pk: id, proy_estado: 'ACTIVE' },
+        data,
+      });
+    } catch (error) { 
+      return error;
+    }
+    return respDb;
   }
 }

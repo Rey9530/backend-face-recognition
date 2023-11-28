@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsString, IsUUID, Matches, MinLength } from 'class-validator';
+import { FORMAT_FECHA_YYYY_MM_DD } from 'src/common/const';
 
 export class CreateEmployeDto {
   @ApiProperty({})
@@ -8,10 +9,12 @@ export class CreateEmployeDto {
   @MinLength(4)
   emp_codigo: string;
 
-  @ApiProperty() 
+  @ApiProperty()
   @IsString()
-  @MinLength(4) 
-  @Matches(/^([0-2][0-9]|3[0-1])(\/|-)(0[1-9]|1[0-2])\2(\d{4})$/ , { message:'La fecha es incorrecta debe ser dd-mm-YYYY'})
+  @MinLength(4)
+  @Matches(FORMAT_FECHA_YYYY_MM_DD, {
+    message: 'La fecha es incorrecta debe ser dd-mm-YYYY,',
+  })
   emp_fecha_nacimiento: Date;
 
   @ApiProperty()
@@ -25,18 +28,18 @@ export class CreateEmployeDto {
   emp_apellidos: string;
 
   @ApiProperty()
-  @IsUUID('all',{message:'La empresa es incorrecta'})
+  @IsUUID('all', { message: 'La empresa es incorrecta' })
   marca_emp_empre: string;
 
   @ApiProperty()
-  @IsUUID('all',{message:'El género es incorrecto'})
-  marca_emp_gen:string;
+  @IsUUID('all', { message: 'El género es incorrecto' })
+  marca_emp_gen: string;
 
   @ApiProperty()
-  @IsUUID('all',{message:'La ubicación es incorrecta'})
-  marca_emp_ubi:string;
+  @IsUUID('all', { message: 'La ubicación es incorrecta' })
+  marca_emp_ubi: string;
 
   @ApiProperty()
-  @IsUUID('all',{message:'El tipo de contratación es incorrecta'})
-  marca_emp_cn:string;
+  @IsUUID('all', { message: 'El tipo de contratación es incorrecta' })
+  marca_emp_cn: string;
 }

@@ -1,0 +1,1 @@
+export { FORMAT_FECHA_YYYY_MM_DD } from "./regrex"
