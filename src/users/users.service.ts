@@ -68,8 +68,7 @@ export class UsersService {
         select: { marca_usr_pk: true, usr_codigo: true, usr_nombres: true, usr_apellidos: true, usr_contrasenia: true, usr_estado: true } //! OJO!
       });
       delete userN.usr_contrasenia;
-      delete userN.marca_usr_pk;
-      delete userN.usr_estado;
+      delete userN.marca_usr_pk; 
       return {
         ...userN,
         token: this.getJwtToken({ marca_usr_uuid: userN.marca_usr_pk })

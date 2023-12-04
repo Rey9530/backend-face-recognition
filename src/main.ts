@@ -44,7 +44,7 @@ async function bootstrap() {
       filter: true,
     },
   });
-
+  app.enableCors(); 
   await app.listen(3000);
 }
 bootstrap();

@@ -3,19 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
-  ParseUUIDPipe, 
+  ParseUUIDPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { EmployesService } from './employes.service';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
 import { marca_usr_usuario } from '@prisma/client';
-import { Auth, GetUser } from 'src/users/decorators'; 
+import { Auth, GetUser } from 'src/users/decorators';
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
 @ApiTags('Employes')
@@ -25,7 +24,7 @@ import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 export class EmployesController {
   constructor(private readonly employesService: EmployesService) {}
 
-  @Post() 
+  @Post()
   create(
     @Body() createEmployeDto: CreateEmployeDto,
     @GetUser() user: marca_usr_usuario,
