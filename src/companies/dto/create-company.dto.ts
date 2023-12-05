@@ -7,6 +7,7 @@ export class CreateCompanyDto {
     @ApiProperty({})
     @IsString()
     @MinLength(1)
+    
     empre_nombre: string;
 
     @ApiProperty({})
@@ -20,7 +21,7 @@ export class CreateCompanyDto {
     empre_contacto_nombre: string;
 
     @ApiProperty({})
-    @IsEmail()
+    @IsEmail({},{message:"El correo debe ser un correo valido"})
     @MinLength(1)
     empre_contacto_correo: string;
 
