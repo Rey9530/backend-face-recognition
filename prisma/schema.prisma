@@ -21,6 +21,17 @@ model marca_gen_genero {
   marca_emp_empleados marca_emp_empleados[]
 }
 
+model marca_dia_dias {
+  marca_dia_pk String   @id @default(uuid())
+  dia_nombre   String
+  dia_code     String
+  dia_estado   Estado   @default(ACTIVE)
+  dia_feccrea  DateTime @default(now()) @db.Timestamptz()
+  dia_fecmod   DateTime @default(now()) @db.Timestamptz()
+  dia_usrcrea  String
+  dia_usrmod   String
+}
+
 model marca_ubi_ubicacion {
   marca_ubi_pk        String                @id @default(uuid())
   ubi_nombre          String
