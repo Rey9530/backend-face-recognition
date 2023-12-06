@@ -5,6 +5,7 @@ import { PrismaService } from 'src/common/services';
 import { marca_asig_asignacion, marca_usr_usuario } from '@prisma/client';
 import { isUUID } from 'class-validator';
 import { CodeEmployeDto } from './dto/code-employe.dto';
+import { PaginationDto } from 'src/common/dto/Pagination-dto';
 
 @Injectable()
 export class EmployesService {
@@ -93,9 +94,43 @@ export class EmployesService {
     });
   }
 
-  async findAll() {
-    return await this.prisma.marca_emp_empleados.findMany({
-      where: { emp_estado: 'ACTIVE' },
+  async findAll(codeEmploye: PaginationDto) {
+    var or_ = {};
+    if (codeEmploye.query.length > 3) {
+      var arrayWhere = [];
+      var arrayWords = codeEmploye.query.split(' ');
+      arrayWords.forEach((contains) => {
+        if (contains.length > 0) {
+          arrayWhere.push({
+            emp_nombres: {
+              contains,
+              mode: 'insensitive',
+            },
+          });
+          arrayWhere.push({
+            emp_apellidos: {
+              contains,
+              mode: 'insensitive',
+            },
+          });
+          arrayWhere.push({
+            emp_codigo: {
+              contains,
+              mode: 'insensitive',
+            },
+          });
+        }
+      });
+      or_ = { OR: arrayWhere };
+    }
+    var wCompany = {};
+    if (isUUID(codeEmploye.company)) {
+      wCompany = { marca_emp_empre_fk: codeEmploye.company };
+    }
+    var where: any = { ...wCompany, emp_estado: 'ACTIVE', ...or_ };
+
+    var employes = await this.prisma.marca_emp_empleados.findMany({
+      where,
       orderBy: { emp_nombres: 'asc' },
       include: {
         marca_gen_genero: true,
@@ -103,7 +138,18 @@ export class EmployesService {
         marca_cn_contratacion: true,
         marca_ubi_ubicacion: true,
       },
+      take: Number(codeEmploye.quantity),
+      skip: (Number(codeEmploye.page) - 1) * Number(codeEmploye.quantity),
     });
+    const total = await this.prisma.marca_emp_empleados.count({ where });
+    return {
+      employes,
+      pagination: {
+        page: Number(codeEmploye.page),
+        quantity: Number(codeEmploye.quantity),
+        total,
+      },
+    };
   }
   async generateCode(codeEmploye: CodeEmployeDto) {
     var dateArray = codeEmploye.emp_fecha_nacimiento.split('-');

@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -17,6 +18,7 @@ import { marca_usr_usuario } from '@prisma/client';
 import { Auth, GetUser } from 'src/users/decorators';
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 import { CodeEmployeDto } from './dto/code-employe.dto';
+import { PaginationDto } from 'src/common/dto/Pagination-dto';
 
 @ApiTags('Employes')
 @Auth()
@@ -40,8 +42,10 @@ export class EmployesController {
   }
 
   @Get()
-  findAll() {
-    return this.employesService.findAll();
+  findAll(
+    @Query() codeEmploye: PaginationDto, 
+  ) {
+    return this.employesService.findAll(codeEmploye);
   }
 
   @Get("get/catalogs")
