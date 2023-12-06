@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsOptional, IsString, IsUUID, Matches, MinLength } from 'class-validator';
-import { FORMAT_FECHA_YYYY_MM_DD } from 'src/common/const';
+import { FORMAT_FECHA_DD_MM_YYYY, FORMAT_FECHA_YYYY_MM_DD } from 'src/common/const';
 
 export class CreateEmployeDto {
   @ApiProperty({})
@@ -12,8 +12,8 @@ export class CreateEmployeDto {
   @ApiProperty()
   @IsString()
   @MinLength(4)
-  @Matches(FORMAT_FECHA_YYYY_MM_DD, {
-    message: 'La fecha es incorrecta debe ser YYYY-mm-dd',
+  @Matches(FORMAT_FECHA_DD_MM_YYYY, {
+    message: 'La fecha es incorrecta debe ser dd/mm/YYYY',
   })
   emp_fecha_nacimiento: Date;
 

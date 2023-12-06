@@ -16,6 +16,7 @@ import { UpdateEmployeDto } from './dto/update-employe.dto';
 import { marca_usr_usuario } from '@prisma/client';
 import { Auth, GetUser } from 'src/users/decorators';
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
+import { CodeEmployeDto } from './dto/code-employe.dto';
 
 @ApiTags('Employes')
 @Auth()
@@ -31,12 +32,34 @@ export class EmployesController {
   ): Promise<CreateEmployeDto> {
     return this.employesService.create(createEmployeDto, user);
   }
+  @Post("generatecode")
+  generateCode(
+    @Body() codeEmploye: CodeEmployeDto, 
+  ): Promise<any> {
+    return this.employesService.generateCode(codeEmploye);
+  }
 
   @Get()
   findAll() {
     return this.employesService.findAll();
   }
 
+
+  @Get("get/sedes")
+  getSedes() {
+    return this.employesService.getSedes();
+  }
+
+
+  @Get("get/gender")
+  getGender() {
+    return this.employesService.getGender();
+  }
+
+  @Get("get/contratation")
+  getContratation() {
+    return this.employesService.getContratation();
+  }
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.employesService.findOne(id);
