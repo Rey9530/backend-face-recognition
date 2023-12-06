@@ -167,7 +167,7 @@ export class EmployesService {
   }
 
   async findOne(id: string) {
-    var respDb = await this.prisma.marca_emp_empleados.findMany({
+    var respDb = await this.prisma.marca_emp_empleados.findFirst({
       where: { emp_estado: 'ACTIVE', marca_emp_pk: id },
       include: {
         marca_gen_genero: true,
