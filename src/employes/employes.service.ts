@@ -10,7 +10,7 @@ import { CodeEmployeDto } from './dto/code-employe.dto';
 export class EmployesService {
   private readonly logger = new Logger('EmployesService');
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     createEmployeDto: CreateEmployeDto,
@@ -34,7 +34,11 @@ export class EmployesService {
     try {
       var employe = await this.prisma.marca_emp_empleados.create({ data });
 
-      if (createEmployeDto.marca_asig_proy && isUUID(createEmployeDto.marca_asig_proy)) { //TODO: Agregar validacion de identificar si existe la empresa
+      if (
+        createEmployeDto.marca_asig_proy &&
+        isUUID(createEmployeDto.marca_asig_proy)
+      ) {
+        //TODO: Agregar validacion de identificar si existe la empresa
         var proyecto: any = {
           asig_hora_inicio: new Date(),
           asig_hora_fin: new Date(),
@@ -55,62 +59,78 @@ export class EmployesService {
   async getSedes() {
     return await this.prisma.marca_ubi_ubicacion.findMany({
       where: { ubi_estado: 'ACTIVE' },
-      select: { marca_ubi_pk: true, ubi_nombre: true }
+      select: { marca_ubi_pk: true, ubi_nombre: true },
     });
+  }
+
+  async getCompanies() {
+    return await this.prisma.marca_empre_empresas.findMany({
+      where: { empre_estado: 'ACTIVE' },
+      select: { marca_empre_pk: true, empre_nombre: true },
+    });
+  }
+  async getCatalogs() {
+    const [sedes, contratation, gender, companies] = await Promise.all([
+      await this.getSedes(),
+      await this.getContratation(),
+      await this.getGender(),
+      await this.getCompanies(),
+    ]);
+    return { sedes, contratation, gender, companies };
   }
 
   async getContratation() {
     return await this.prisma.marca_cn_contratacion.findMany({
       where: { cn_estado: 'ACTIVE' },
-      select: { marca_cn_pk: true, cn_nombre: true }
+      select: { marca_cn_pk: true, cn_nombre: true },
     });
   }
 
   async getGender() {
     return await this.prisma.marca_gen_genero.findMany({
       where: { gen_estado: 'ACTIVE' },
-      select: { marca_gen_pk: true, gen_nombre: true }
+      select: { marca_gen_pk: true, gen_nombre: true },
     });
   }
-
 
   async findAll() {
     return await this.prisma.marca_emp_empleados.findMany({
       where: { emp_estado: 'ACTIVE' },
-      orderBy: { emp_nombres: 'asc'  },
+      orderBy: { emp_nombres: 'asc' },
       include: {
         marca_gen_genero: true,
         marca_asig_asignacion: true,
         marca_cn_contratacion: true,
         marca_ubi_ubicacion: true,
-      }
+      },
     });
   }
   async generateCode(codeEmploye: CodeEmployeDto) {
-    var dateArray = codeEmploye.emp_fecha_nacimiento.split("-");
+    var dateArray = codeEmploye.emp_fecha_nacimiento.split('-');
     var year = dateArray[0].toString();
     var precode = year[2] + year[3] + dateArray[1];
 
     var respDb = await this.prisma.marca_emp_empleados.findMany({
       where: { emp_estado: 'ACTIVE', emp_codigo: { contains: precode } },
     });
-    var code = precode.toString() + (respDb.length + 1).toString().padStart(3, '0').toString();
+    var code =
+      precode.toString() +
+      (respDb.length + 1).toString().padStart(3, '0').toString();
 
-    return { code: code }
+    return { code: code };
   }
 
   async findOne(id: string) {
     var respDb = await this.prisma.marca_emp_empleados.findMany({
-      where: { emp_estado: 'ACTIVE', marca_emp_pk: id, },
+      where: { emp_estado: 'ACTIVE', marca_emp_pk: id },
       include: {
         marca_gen_genero: true,
         marca_asig_asignacion: true,
         marca_cn_contratacion: true,
         marca_ubi_ubicacion: true,
-      }
+      },
     });
-    if (!respDb)
-      throw new NotFoundException(`Regisro no encontrado`);
+    if (!respDb) throw new NotFoundException(`Regisro no encontrado`);
     return respDb;
   }
 

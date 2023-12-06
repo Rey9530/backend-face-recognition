@@ -44,6 +44,11 @@ export class EmployesController {
     return this.employesService.findAll();
   }
 
+  @Get("get/catalogs")
+  getCatalogs() {
+    return this.employesService.getCatalogs();
+  }
+
 
   @Get("get/sedes")
   getSedes() {
