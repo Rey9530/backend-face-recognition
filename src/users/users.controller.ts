@@ -5,6 +5,7 @@ import { Auth, GetUser } from 'src/users/decorators';
 import { CreateAuthDto, CreateUserDto, UpdateUserDto } from './dto';
 import { marca_usr_usuario } from '@prisma/client'; 
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
+import { PasswordUserDto } from './dto/password-user.dto';
 
 
 @ApiTags('Users')
@@ -35,6 +36,18 @@ export class UsersController {
     @GetUser() user: marca_usr_usuario
   ) {
     return this.usersService.create(createUserDto, user);
+  }
+
+
+
+  @Post("update/password")
+  @Auth()
+  @ApiBearerAuth(HEADER_API_BEARER_AUTH)
+  updatePassword(
+    @Body() passwordUserDto: PasswordUserDto,
+    @GetUser() user: marca_usr_usuario
+  ) {
+    return this.usersService.updatePassword(passwordUserDto, user);
   }
 
   @Get()

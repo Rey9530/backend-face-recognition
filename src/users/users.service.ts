@@ -4,7 +4,8 @@ import { CreateAuthDto, CreateUserDto, UpdateUserDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces';
 import { marca_usr_usuario } from '@prisma/client';
-import { PrismaService } from 'src/common/services'; 
+import { PrismaService } from 'src/common/services';
+import { PasswordUserDto } from './dto/password-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -35,6 +36,35 @@ export class UsersService {
 
   }
 
+
+  async updatePassword(passwordUserDto: PasswordUserDto, user: marca_usr_usuario) {
+    try {
+
+      const respDb = await this.prisma.marca_usr_usuario.findFirst({
+        where: { marca_usr_pk: user.marca_usr_pk },
+      });
+
+      if (!respDb)
+        throw new NotFoundException('Usuario no encontrado');
+      const password = passwordUserDto.curren_password;
+      if (!bcrypt.compareSync(password, respDb.usr_contrasenia))
+        throw new UnauthorizedException('Credenciales incorrectas');
+
+      if (bcrypt.compareSync(passwordUserDto.new_password, user.usr_contrasenia))
+        throw new UnauthorizedException('La nueva contraseña no debe ser la misma que la actual');
+
+      await this.prisma.marca_usr_usuario.update({
+        where: { marca_usr_pk: respDb.marca_usr_pk },
+        data: {
+          usr_contrasenia: bcrypt.hashSync(passwordUserDto.new_password, 10),
+        }
+      });
+      return;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
   async login(createUserDto: CreateAuthDto): Promise<any> {
 
     const { password, user_code } = createUserDto;
@@ -51,16 +81,15 @@ export class UsersService {
     if (!bcrypt.compareSync(password, user.usr_contrasenia))
       throw new UnauthorizedException('Credenciales incorrectas');
     delete user.usr_contrasenia;
-    delete user.marca_usr_pk;
-    var data:any = {
+    var data: any = {
       ...user,
       token: this.getJwtToken({ marca_usr_uuid: user.marca_usr_pk })
     };
 
-    return data; 
+    return data;
   }
 
-  async checkStatus(user: any) {
+  async checkStatus(user: marca_usr_usuario) {
 
     try {
       const userN = await this.prisma.marca_usr_usuario.findFirst({
@@ -68,7 +97,6 @@ export class UsersService {
         select: { marca_usr_pk: true, usr_codigo: true, usr_nombres: true, usr_apellidos: true, usr_contrasenia: true, usr_estado: true } //! OJO!
       });
       delete userN.usr_contrasenia;
-      delete userN.marca_usr_pk; 
       return {
         ...userN,
         token: this.getJwtToken({ marca_usr_uuid: userN.marca_usr_pk })
@@ -120,7 +148,6 @@ export class UsersService {
   }
 
   private getJwtToken(payload: JwtPayload) {
-
     const token = this.jwtService.sign(payload);
     return token;
 
@@ -131,8 +158,8 @@ export class UsersService {
     if (error.code === '23505')
       throw new BadRequestException(error.detail);
 
-    this.logger.error(error) 
-    throw new InternalServerErrorException('Unexpected error, check server logs');
+    this.logger.error(error)
+    throw new InternalServerErrorException(error);
 
   }
 }
