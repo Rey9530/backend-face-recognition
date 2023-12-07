@@ -8,7 +8,7 @@ import {
   ParseUUIDPipe,
   Put,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
+import { ContractsService } from './contracts.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -20,8 +20,8 @@ import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 @Controller('v1/projects')
 @Auth()
 @ApiBearerAuth(HEADER_API_BEARER_AUTH)
-export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+export class ContractsController {
+  constructor(private readonly projectsService: ContractsService) {}
 
   @Post()
   create(

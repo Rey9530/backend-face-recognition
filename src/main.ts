@@ -3,10 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import {
-  TimeOutIntersector,
-  TransformInterceptor,
-} from './common/intersectors';
+import { TransformInterceptor } from './common/intersectors';
 import { AllExceptionFilter } from './common/filters';
 import { HEADER_API_BEARER_AUTH } from './common/const/regrex';
 
@@ -44,7 +41,7 @@ async function bootstrap() {
       filter: true,
     },
   });
-  app.enableCors(); 
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();

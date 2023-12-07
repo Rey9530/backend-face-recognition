@@ -7,10 +7,10 @@ import {
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/common/services';
-import { marca_proy_proyecto, marca_usr_usuario } from '@prisma/client';
+import { marca_ctr_contratos, marca_usr_usuario } from '@prisma/client';
 
 @Injectable()
-export class ProjectsService {
+export class ContractsService {
   private readonly logger = new Logger('EmployesService');
 
   constructor(private readonly prisma: PrismaService) {}
@@ -36,7 +36,7 @@ export class ProjectsService {
         proy_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
         marca_proy_empre_fk: createProjectDto.marca_proy_empre,
       };
-      return await this.prisma.marca_proy_proyecto.create({ data });
+      return await this.prisma.marca_ctr_contratos.create({ data });
     } catch (error) {
       return error;
     }
@@ -44,8 +44,8 @@ export class ProjectsService {
 
   async findAll() {
     try {
-      return await this.prisma.marca_proy_proyecto.findMany({
-        where: { proy_estado: 'ACTIVE' },
+      return await this.prisma.marca_ctr_contratos.findMany({
+        where: { ctr_estado: 'ACTIVE' },
       });
     } catch (error) {
       return error;
@@ -54,8 +54,8 @@ export class ProjectsService {
 
   async findOne(id: string) {
     try {
-      var respDb = await this.prisma.marca_proy_proyecto.findFirst({
-        where: { marca_proy_pk: id,  proy_estado:'ACTIVE' },
+      var respDb = await this.prisma.marca_ctr_contratos.findFirst({
+        where: { marca_ctr_pk: id,  ctr_estado:'ACTIVE' },
       });
     } catch (error) {
       return error;
@@ -89,8 +89,8 @@ export class ProjectsService {
         proy_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
         marca_proy_empre_fk: updateProjectDto.marca_proy_empre,
       };
-      var respDb = await this.prisma.marca_proy_proyecto.update({
-        where: { marca_proy_pk: id, proy_estado: 'ACTIVE' },
+      var respDb = await this.prisma.marca_ctr_contratos.update({
+        where: { marca_ctr_pk: id, ctr_estado: 'ACTIVE' },
         data,
       });
       if (!respDb) throw new NotFoundException('Registro no encontrado');
@@ -104,8 +104,8 @@ export class ProjectsService {
     await this.findOne(id);
     try {
       var data: any = { proy_estado: 'INACTIVE' };
-      var respDb = await this.prisma.marca_proy_proyecto.update({
-        where: { marca_proy_pk: id, proy_estado: 'ACTIVE' },
+      var respDb = await this.prisma.marca_ctr_contratos.update({
+        where: { marca_ctr_pk: id, ctr_estado: 'ACTIVE' },
         data,
       });
     } catch (error) { 

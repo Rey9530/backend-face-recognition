@@ -22,14 +22,15 @@ model marca_gen_genero {
 }
 
 model marca_dia_dias {
-  marca_dia_pk String   @id @default(uuid())
-  dia_nombre   String
-  dia_code     String
-  dia_estado   Estado   @default(ACTIVE)
-  dia_feccrea  DateTime @default(now()) @db.Timestamptz()
-  dia_fecmod   DateTime @default(now()) @db.Timestamptz()
-  dia_usrcrea  String
-  dia_usrmod   String
+  marca_dia_pk          String                  @id @default(uuid())
+  dia_nombre            String
+  dia_code              String
+  dia_estado            Estado                  @default(ACTIVE)
+  dia_feccrea           DateTime                @default(now()) @db.Timestamptz()
+  dia_fecmod            DateTime                @default(now()) @db.Timestamptz()
+  dia_usrcrea           String
+  dia_usrmod            String
+  marca_hode_detalle_ho marca_hode_detalle_ho[]
 }
 
 model marca_ubi_ubicacion {
@@ -68,7 +69,7 @@ model marca_empre_empresas {
   empre_estado            Estado                @default(ACTIVE)
   marca_empre_usr_fk      String
   marca_usr_usuario       marca_usr_usuario     @relation(fields: [marca_empre_usr_fk], references: [marca_usr_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_empre_usr_fk")
-  marca_proy_proyecto     marca_proy_proyecto[]
+  marca_ctr_contratos     marca_ctr_contratos[]
 }
 
 model marca_emp_empleados {
@@ -106,49 +107,84 @@ model marca_usr_usuario {
   marca_empre_empresas marca_empre_empresas[]
 }
 
-model marca_proy_proyecto {
-  marca_proy_pk         String                  @id @default(uuid())
-  proy_nombre           String
-  proy_numero_contrato  String
-  proy_fecha_inicio     DateTime
-  proy_fecha_fin        DateTime
-  proy_estado           Estado                  @default(ACTIVE)
-  proy_feccrea          DateTime                @default(now())
-  proy_fecmod           DateTime                @default(now()) @db.Timestamptz()
-  proy_usrcrea          String
-  proy_usrmod           String
-  marca_proy_empre_fk   String
-  marca_empre_empresas  marca_empre_empresas    @relation(fields: [marca_proy_empre_fk], references: [marca_empre_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_proy_empre_fk")
+model marca_ctr_contratos {
+  marca_ctr_pk         String               @id @default(uuid())
+  ctr_nombre           String
+  ctr_numero_contrato  String
+  horas_extras         Int                  @db.Integer
+  ctr_fecha_inicio     DateTime
+  ctr_fecha_fin        DateTime
+  ctr_fecha_inicio_pro DateTime?
+  ctr_fecha_fin_pro    DateTime?
+  ctr_estado           Estado               @default(ACTIVE)
+  ctr_feccrea          DateTime             @default(now())
+  ctr_fecmod           DateTime             @default(now()) @db.Timestamptz()
+  ctr_usrcrea          String
+  ctr_usrmod           String
+  marca_ctr_empre_fk   String
+  marca_empre_empresas marca_empre_empresas @relation(fields: [marca_ctr_empre_fk], references: [marca_empre_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_ctr_empre_fk")
+  marca_ho_horarios    marca_ho_horarios[]
+}
+
+model marca_ho_horarios {
+  marca_ho_pk           String                  @id @default(uuid())
+  ho_nombre             String
+  marca_ho_ctro_fk      String
+  marca_ctr_contratos   marca_ctr_contratos     @relation(fields: [marca_ho_ctro_fk], references: [marca_ctr_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_ho_ctro_fk")
+  ho_estado             Estado                  @default(ACTIVE)
+  ho_feccrea            DateTime                @default(now())
+  ho_fecmod             DateTime                @default(now()) @db.Timestamptz()
+  ho_usrcrea            String
+  ho_usrmod             String
+  marca_hode_detalle_ho marca_hode_detalle_ho[]
   marca_asig_asignacion marca_asig_asignacion[]
+}
+
+model marca_hode_detalle_ho {
+  marca_hode_pk     String            @id @default(uuid())
+  marca_hode_ho_fk  String
+  marca_ho_horarios marca_ho_horarios @relation(fields: [marca_hode_ho_fk], references: [marca_ho_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_hode_ho_fk")
+  marca_ho_dia_fk   String
+  marca_dia_dias    marca_dia_dias    @relation(fields: [marca_ho_dia_fk], references: [marca_dia_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_ho_dia_fk")
+  hode_inicio_1     DateTime          @db.Time()
+  hode_fin_1        DateTime          @db.Time()
+  hode_inicio_2     DateTime          @db.Time()
+  hode_fin_2        DateTime          @db.Time()
+  hode_estado       Estado            @default(ACTIVE)
+  hode_feccrea      DateTime          @default(now())
+  hode_fecmod       DateTime          @default(now()) @db.Timestamptz()
+  hode_usrcrea      String
+  hode_usrmod       String
 }
 
 model marca_asig_asignacion {
   marca_asig_pk       String                @id @default(uuid())
-  asig_hora_inicio    DateTime
-  asig_hora_fin       DateTime
-  proy_estado         Estado                @default(ACTIVE)
+  asig_estado         Estado                @default(ACTIVE)
   asig_feccrea        DateTime              @default(now())
   asig_fecmod         DateTime              @default(now()) @db.Timestamptz()
   asig_usrcrea        String
   asig_usrmod         String
-  marca_asig_proy_fk  String
-  marca_proy_proyecto marca_proy_proyecto   @relation(fields: [marca_asig_proy_fk], references: [marca_proy_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_asig_proy_fk")
+  marca_asig_ho_fk    String
+  marca_ho_horarios   marca_ho_horarios     @relation(fields: [marca_asig_ho_fk], references: [marca_ho_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_asig_ho_fk")
   marca_asig_emp_fk   String
   marca_emp_empleados marca_emp_empleados   @relation(fields: [marca_asig_emp_fk], references: [marca_emp_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_asig_emp_fk")
   marca_his_historial marca_his_historial[]
 }
 
 model marca_his_historial {
-  marca_histm_pk        String                @id @default(uuid())
-  histm_marca           DateTime
+  marca_his_pk          String                @id @default(uuid())
+  his_hora_entrada      DateTime
+  his_hora_salida       DateTime
+  his_tiempo_trabajado  DateTime              @db.Time()
+  his_tiempo_extra      DateTime              @db.Time()
   emp_estado            Estado                @default(ACTIVE)
-  marca_histm_usr_fk    String
-  histm_feccrea         DateTime              @default(now())
-  histm_fecmod          DateTime              @default(now()) @db.Timestamptz()
-  histm_usrcrea         String
-  histm_usrmod          String
-  marca_histm_asig_fk   String
-  marca_asig_asignacion marca_asig_asignacion @relation(fields: [marca_histm_asig_fk], references: [marca_asig_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_histm_asig_fk")
+  marca_his_usr_fk      String
+  his_feccrea           DateTime              @default(now())
+  his_fecmod            DateTime              @default(now()) @db.Timestamptz()
+  his_usrcrea           String
+  his_usrmod            String
+  marca_his_asig_fk     String
+  marca_asig_asignacion marca_asig_asignacion @relation(fields: [marca_his_asig_fk], references: [marca_asig_pk], onDelete: NoAction, onUpdate: NoAction, map: "marca_his_asig_fk")
 }
 
 enum Estado {
