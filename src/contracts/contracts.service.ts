@@ -77,6 +77,12 @@ export class ContractsService {
     return respDb;
   }
 
+  async getCompanies() {
+    return await this.prisma.mar_epr_empresas.findMany({
+      where: { epr_estado: 'ACTIVE' },
+      select: { epr_codigo: true, epr_nombre: true },
+    });
+  }
   async update(
     id: string,
     updateProjectDto: UpdateProjectDto,

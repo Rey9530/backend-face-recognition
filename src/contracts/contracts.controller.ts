@@ -31,6 +31,10 @@ export class ContractsController {
     return this.projectsService.create(createProjectDto, user);
   }
 
+  @Get("get/companies")
+  getCompanies() {
+    return this.projectsService.getCompanies();
+  }
   @Get()
   findAll() {
     return this.projectsService.findAll();
