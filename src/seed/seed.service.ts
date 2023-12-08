@@ -8,20 +8,20 @@ export class SeedService {
 
   constructor(private readonly prisma: PrismaService) {}
   async deleteSeed() {
-    await this.prisma.marca_emp_empleados.deleteMany();
-    await this.prisma.marca_empre_empresas.deleteMany();
-    await this.prisma.marca_usr_usuario.deleteMany();
-    await this.prisma.marca_gen_genero.deleteMany();
-    await this.prisma.marca_ubi_ubicacion.deleteMany();
-    await this.prisma.marca_cn_contratacion.deleteMany();
-    await this.prisma.marca_dia_dias.deleteMany();
+    await this.prisma.mar_emp_empleados.deleteMany();
+    await this.prisma.mar_epr_empresas.deleteMany();
+    await this.prisma.mar_usr_usuario.deleteMany();
+    await this.prisma.mar_gen_generos.deleteMany();
+    await this.prisma.mar_ubi_ubicaciones.deleteMany();
+    await this.prisma.mar_con_contrataciones.deleteMany();
+    await this.prisma.mar_dia_dias.deleteMany();
   }
 
   async executeSeed() {
     try {
       await this.deleteSeed();
       var cremod = 'Creado por el seeder';
-      await this.prisma.marca_ubi_ubicacion.createMany({
+      await this.prisma.mar_ubi_ubicaciones.createMany({
         data: [
           {
             ubi_nombre: 'Central hidroeléctrica Guajoyo',
@@ -75,7 +75,7 @@ export class SeedService {
           },
         ],
       });
-      var gender = await this.prisma.marca_gen_genero.create({
+      var gender = await this.prisma.mar_gen_generos.create({
         data: {
           gen_nombre: 'Masculino',
           gen_usrcrea: cremod,
@@ -83,7 +83,7 @@ export class SeedService {
         },
       });
 
-      await this.prisma.marca_gen_genero.create({
+      await this.prisma.mar_gen_generos.create({
         data: {
           gen_nombre: 'Femenino',
           gen_usrcrea: cremod,
@@ -91,54 +91,54 @@ export class SeedService {
         },
       });
 
-      await this.prisma.marca_dia_dias.createMany({
+      await this.prisma.mar_dia_dias.createMany({
         data: [
           {
             dia_nombre: 'Lunes',
-            dia_code: 'LU',
+            dia_dia_codigo: 'LU',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Martes',
-            dia_code: 'MA',
+            dia_dia_codigo: 'MA',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Miercoles',
-            dia_code: 'MI',
+            dia_dia_codigo: 'MI',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Jueves',
-            dia_code: 'JU',
+            dia_dia_codigo: 'JU',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Viernes',
-            dia_code: 'VI',
+            dia_dia_codigo: 'VI',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Sabado',
-            dia_code: 'SA',
+            dia_dia_codigo: 'SA',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Domingo',
-            dia_code: 'DO',
+            dia_dia_codigo: 'DO',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
         ],
       });
 
-      var ubicacion1 = await this.prisma.marca_ubi_ubicacion.create({
+      var ubicacion1 = await this.prisma.mar_ubi_ubicaciones.create({
         data: {
           ubi_nombre: 'Central',
           ubi_usrcrea: cremod,
@@ -146,7 +146,7 @@ export class SeedService {
         },
       });
 
-      await this.prisma.marca_ubi_ubicacion.create({
+      await this.prisma.mar_ubi_ubicaciones.create({
         data: {
           ubi_nombre: 'Bodegas San Ramon',
           ubi_usrcrea: cremod,
@@ -154,31 +154,31 @@ export class SeedService {
         },
       });
 
-      var contrataciones1 = await this.prisma.marca_cn_contratacion.create({
+      var contrataciones1 = await this.prisma.mar_con_contrataciones.create({
         data: {
-          cn_nombre: 'Fijo',
-          cn_usrcrea: cremod,
-          cn_usrmod: cremod,
+          con_nombre: 'Fijo',
+          con_usrcrea: cremod,
+          con_usrmod: cremod,
         },
       });
-      await this.prisma.marca_cn_contratacion.create({
+      await this.prisma.mar_con_contrataciones.create({
         data: {
-          cn_nombre: 'Apoyo',
-          cn_usrcrea: cremod,
-          cn_usrmod: cremod,
+          con_nombre: 'Apoyo',
+          con_usrcrea: cremod,
+          con_usrmod: cremod,
         },
       });
-      await this.prisma.marca_cn_contratacion.create({
+      await this.prisma.mar_con_contrataciones.create({
         data: {
-          cn_nombre: 'Reemplazo',
-          cn_usrcrea: cremod,
-          cn_usrmod: cremod,
+          con_nombre: 'Reemplazo',
+          con_usrcrea: cremod,
+          con_usrmod: cremod,
         },
       });
 
-      var usuario = await this.prisma.marca_usr_usuario.create({
+      var usuario = await this.prisma.mar_usr_usuario.create({
         data: {
-          usr_codigo: '12345678',
+          usr_codigo_emple: '12345678',
           usr_nombres: 'Usuario',
           usr_apellidos: 'Administrador',
           usr_contrasenia: bcrypt.hashSync('12345678', 10),
@@ -187,31 +187,31 @@ export class SeedService {
         },
       });
 
-      var empresa = await this.prisma.marca_empre_empresas.create({
+      var empresa = await this.prisma.mar_epr_empresas.create({
         data: {
-          empre_nombre: 'Empresa 1',
-          empre_direccion: 'San Salvador',
-          empre_contacto_nombre: 'Contacto Nombre',
-          empre_contacto_correo: 'demo@demo.com',
-          empre_contacto_telefono: '+50365326545',
-          empre_usrcrea: cremod,
-          empre_usrmod: cremod,
-          marca_empre_usr_fk: usuario.marca_usr_pk,
+          epr_nombre: 'Empresa 1',
+          epr_direccion: 'San Salvador',
+          epr_contacto_nombre: 'Contacto Nombre',
+          epr_contacto_correo: 'demo@demo.com',
+          epr_contacto_telefono: '+50365326545',
+          epr_usrcrea: cremod,
+          epr_usrmod: cremod,
+          epr_codusr : usuario.usr_codigo,
         },
       });
 
-      var empleado = await this.prisma.marca_emp_empleados.create({
+      var empleado = await this.prisma.mar_emp_empleados.create({
         data: {
-          emp_codigo: 'T-8502001',
+          emp_codigo_emp: 'T-8502001',
           emp_fecha_nacimiento: new Date(),
           emp_nombres: 'Empleado',
           emp_apellidos: 'Tercerizado',
           emp_usrcrea: cremod,
           emp_usrmod: cremod,
-          marca_emp_empre_fk: empresa.marca_empre_pk,
-          marca_emp_gen_fk: gender.marca_gen_pk,
-          marca_emp_ubi_fk: ubicacion1.marca_ubi_pk,
-          marca_emp_cn_fk: contrataciones1.marca_cn_pk,
+          emp_codemp: empresa.epr_codigo,
+          emp_codgen: gender.gen_codigo,
+          emp_codubi: ubicacion1.ubi_codigo,
+          emp_codcon: contrataciones1.con_codigo,
         },
       });
     } catch (error) {

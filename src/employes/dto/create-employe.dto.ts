@@ -15,7 +15,7 @@ export class CreateEmployeDto {
   @Matches(FORMAT_FECHA_DD_MM_YYYY, {
     message: 'La fecha es incorrecta debe ser dd/mm/YYYY',
   })
-  emp_fecha_nacimiento: Date;
+  emp_fecha_nacimiento: string;
 
   @ApiProperty()
   @IsString()

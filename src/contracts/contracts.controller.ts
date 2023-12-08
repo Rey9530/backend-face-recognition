@@ -13,7 +13,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/users/decorators';
-import { marca_usr_usuario } from '@prisma/client'; 
+import { mar_usr_usuario } from '@prisma/client'; 
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
 @ApiTags('Contracts')
@@ -26,7 +26,7 @@ export class ContractsController {
   @Post()
   create(
     @Body() createProjectDto: CreateProjectDto,
-    @GetUser() user: marca_usr_usuario,
+    @GetUser() user: mar_usr_usuario,
   ) {
     return this.projectsService.create(createProjectDto, user);
   }
@@ -45,14 +45,15 @@ export class ContractsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
-    @GetUser() user: marca_usr_usuario,
+    @GetUser() user: mar_usr_usuario,
   ) {
     return this.projectsService.update(id, updateProjectDto,user);
   }
 
   @Delete(':id')
   remove(
-    @Param('id', ParseUUIDPipe) id: string,) {
-    return this.projectsService.remove(id);
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: mar_usr_usuario,) {
+    return this.projectsService.remove(id,user);
   }
 }

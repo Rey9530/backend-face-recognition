@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
     async validate(payload: JwtPayload): Promise<any> {
         const { marca_usr_uuid } = payload; 
-        const user = await this.prisma.marca_usr_usuario.findFirst({ where: { marca_usr_pk: marca_usr_uuid } }); 
+        const user = await this.prisma.mar_usr_usuario.findFirst({ where: { usr_codigo: marca_usr_uuid } }); 
         if (!user) throw new UnauthorizedException('Token no valido')
         if (user.usr_estado == 'INACTIVE') throw new UnauthorizedException('Token no valido')
 

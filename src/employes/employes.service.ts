@@ -2,10 +2,15 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
 import { PrismaService } from 'src/common/services';
-import { marca_asig_asignacion, marca_usr_usuario } from '@prisma/client';
+import {
+  mar_asi_asignacion,
+  mar_emp_empleados,
+  mar_usr_usuario,
+} from '@prisma/client';
 import { isUUID } from 'class-validator';
 import { CodeEmployeDto } from './dto/code-employe.dto';
 import { PaginationDto } from 'src/common/dto/Pagination-dto';
+import { convert_date } from 'src/common/helpers/conver_date.heper';
 
 @Injectable()
 export class EmployesService {
@@ -15,40 +20,42 @@ export class EmployesService {
 
   async create(
     createEmployeDto: CreateEmployeDto,
-    user: marca_usr_usuario,
+    user: mar_usr_usuario,
   ): Promise<any> {
+    var emp_fecha_nacimiento = convert_date(
+      createEmployeDto.emp_fecha_nacimiento
+    );
+    var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
     var data: any = {
-      marca_emp_gen_fk: createEmployeDto.marca_emp_gen,
-      marca_emp_ubi_fk: createEmployeDto.marca_emp_ubi,
-      marca_emp_cn_fk: createEmployeDto.marca_emp_cn,
+      emp_codgen: createEmployeDto.marca_emp_gen,
+      emp_codubi: createEmployeDto.marca_emp_ubi,
+      emp_codcon: createEmployeDto.marca_emp_cn,
       emp_feccrea: new Date(),
       emp_fecmod: new Date(),
-      emp_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
-      emp_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
+      emp_usrcrea: usuariosName,
+      emp_usrmod: usuariosName,
       emp_estado: 'ACTIVE',
-      marca_emp_empre_fk: createEmployeDto.marca_emp_empre,
-      emp_codigo: createEmployeDto.emp_codigo,
-      emp_fecha_nacimiento: new Date(createEmployeDto.emp_fecha_nacimiento),
+      emp_codemp: createEmployeDto.marca_emp_empre,
+      emp_codigo_emp: createEmployeDto.emp_codigo,
+      emp_fecha_nacimiento,
       emp_nombres: createEmployeDto.emp_nombres,
       emp_apellidos: createEmployeDto.emp_apellidos,
     };
     try {
-      var employe = await this.prisma.marca_emp_empleados.create({ data });
+      var employe = await this.prisma.mar_emp_empleados.create({ data });
 
       if (
         createEmployeDto.marca_asig_proy &&
         isUUID(createEmployeDto.marca_asig_proy)
       ) {
         //TODO: Agregar validacion de identificar si existe la empresa
-        var proyecto: any = {
-          asig_hora_inicio: new Date(),
-          asig_hora_fin: new Date(),
-          asig_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
-          asig_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
-          marca_asig_proy_fk: createEmployeDto.marca_asig_proy,
-          marca_asig_emp_fk: employe.marca_emp_pk,
-        };
-        await this.prisma.marca_asig_asignacion.create({ data: proyecto });
+        // var proyecto: any = {
+        //   asi_usrcrea: usuariosName,
+        //   asi_usrmod: usuariosName,
+        //   asi_codemp: employe.emp_codigo,
+        //   asi_codhor: ''
+        // };
+        // await this.prisma.mar_asi_asignacion.create({ data: proyecto });
       }
       return employe;
     } catch (error) {
@@ -58,16 +65,16 @@ export class EmployesService {
   }
 
   async getSedes() {
-    return await this.prisma.marca_ubi_ubicacion.findMany({
+    return await this.prisma.mar_ubi_ubicaciones.findMany({
       where: { ubi_estado: 'ACTIVE' },
-      select: { marca_ubi_pk: true, ubi_nombre: true },
+      select: { ubi_codigo: true, ubi_nombre: true },
     });
   }
 
   async getCompanies() {
-    return await this.prisma.marca_empre_empresas.findMany({
-      where: { empre_estado: 'ACTIVE' },
-      select: { marca_empre_pk: true, empre_nombre: true },
+    return await this.prisma.mar_epr_empresas.findMany({
+      where: { epr_estado: 'ACTIVE' },
+      select: { epr_codigo: true, epr_nombre: true },
     });
   }
   async getCatalogs() {
@@ -81,16 +88,16 @@ export class EmployesService {
   }
 
   async getContratation() {
-    return await this.prisma.marca_cn_contratacion.findMany({
-      where: { cn_estado: 'ACTIVE' },
-      select: { marca_cn_pk: true, cn_nombre: true },
+    return await this.prisma.mar_con_contrataciones.findMany({
+      where: { con_estado: 'ACTIVE' },
+      select: { con_codigo: true, con_nombre: true },
     });
   }
 
   async getGender() {
-    return await this.prisma.marca_gen_genero.findMany({
+    return await this.prisma.mar_gen_generos.findMany({
       where: { gen_estado: 'ACTIVE' },
-      select: { marca_gen_pk: true, gen_nombre: true },
+      select: { gen_codigo: true, gen_nombre: true },
     });
   }
 
@@ -114,7 +121,7 @@ export class EmployesService {
             },
           });
           arrayWhere.push({
-            emp_codigo: {
+            emp_codigo_emp: {
               contains,
               mode: 'insensitive',
             },
@@ -129,19 +136,19 @@ export class EmployesService {
     }
     var where: any = { ...wCompany, emp_estado: 'ACTIVE', ...or_ };
 
-    var employes = await this.prisma.marca_emp_empleados.findMany({
+    var employes = await this.prisma.mar_emp_empleados.findMany({
       where,
       orderBy: { emp_nombres: 'asc' },
       include: {
-        marca_gen_genero: true,
-        marca_asig_asignacion: true,
-        marca_cn_contratacion: true,
-        marca_ubi_ubicacion: true,
+        mar_gen_generos: true,
+        mar_asi_asignacion: true,
+        mar_con_contrataciones: true,
+        mar_ubi_ubicaciones: true,
       },
       take: Number(codeEmploye.quantity),
       skip: (Number(codeEmploye.page) - 1) * Number(codeEmploye.quantity),
     });
-    const total = await this.prisma.marca_emp_empleados.count({ where });
+    const total = await this.prisma.mar_emp_empleados.count({ where });
     return {
       employes,
       pagination: {
@@ -152,11 +159,11 @@ export class EmployesService {
     };
   }
   async generateCode(codeEmploye: CodeEmployeDto) {
-    var dateArray = codeEmploye.emp_fecha_nacimiento.split('-');
-    var year = dateArray[0].toString();
+    var dateArray = codeEmploye.emp_fecha_nacimiento.split('/');
+    var year = dateArray[2].toString();
     var precode = year[2] + year[3] + dateArray[1];
 
-    var respDb = await this.prisma.marca_emp_empleados.findMany({
+    var respDb = await this.prisma.mar_emp_empleados.findMany({
       where: { emp_estado: 'ACTIVE', emp_codigo: { contains: precode } },
     });
     var code =
@@ -167,13 +174,13 @@ export class EmployesService {
   }
 
   async findOne(id: string) {
-    var respDb = await this.prisma.marca_emp_empleados.findFirst({
-      where: { emp_estado: 'ACTIVE', marca_emp_pk: id },
+    var respDb = await this.prisma.mar_emp_empleados.findFirst({
+      where: { emp_estado: 'ACTIVE', emp_codigo: id },
       include: {
-        marca_gen_genero: true,
-        marca_asig_asignacion: true,
-        marca_cn_contratacion: true,
-        marca_ubi_ubicacion: true,
+        mar_gen_generos: true,
+        mar_asi_asignacion: true,
+        mar_con_contrataciones: true,
+        mar_ubi_ubicaciones: true,
       },
     });
     if (!respDb) throw new NotFoundException(`Regisro no encontrado`);
@@ -183,23 +190,30 @@ export class EmployesService {
   async update(
     id: string,
     updateEmployeDto: UpdateEmployeDto,
-    user: marca_usr_usuario,
+    user: mar_usr_usuario,
   ) {
+    var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
     await this.findOne(id);
-    var data: any = {
-      marca_emp_gen_fk: updateEmployeDto.marca_emp_gen,
-      marca_emp_ubi_fk: updateEmployeDto.marca_emp_ubi,
-      marca_emp_cn_fk: updateEmployeDto.marca_emp_cn,
-      emp_fecha_nacimiento: new Date(updateEmployeDto.emp_fecha_nacimiento),
-      emp_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
-      marca_emp_empre_fk: updateEmployeDto.marca_emp_empre,
-      emp_codigo: updateEmployeDto.emp_codigo,
+    var emp_fecha_nacimiento = convert_date(
+      updateEmployeDto.emp_fecha_nacimiento
+    );
+    var data: any = { 
+      emp_codgen: updateEmployeDto.marca_emp_gen,
+      emp_codubi: updateEmployeDto.marca_emp_ubi,
+      emp_codcon: updateEmployeDto.marca_emp_cn,
+      emp_feccrea: new Date(),
+      emp_fecmod: new Date(),
+      emp_usrcrea: usuariosName,
+      emp_usrmod: usuariosName,
+      emp_codemp: updateEmployeDto.marca_emp_empre,
+      emp_codigo_emp: updateEmployeDto.emp_codigo,
+      emp_fecha_nacimiento,
       emp_nombres: updateEmployeDto.emp_nombres,
-      emp_apellidos: updateEmployeDto.emp_apellidos,
+      emp_apellidos: updateEmployeDto.emp_apellidos, 
     };
     try {
-      const register = await this.prisma.marca_emp_empleados.update({
-        where: { marca_emp_pk: id, emp_estado: 'ACTIVE' },
+      const register = await this.prisma.mar_emp_empleados.update({
+        where: { emp_codigo: id, emp_estado: 'ACTIVE' },
         data,
       });
       return register;
@@ -208,11 +222,11 @@ export class EmployesService {
     }
   }
 
-  async remove(id: string, user: marca_usr_usuario) {
+  async remove(id: string, user: mar_usr_usuario) {
     await this.findOne(id);
     try {
-      const register = await this.prisma.marca_emp_empleados.update({
-        where: { marca_emp_pk: id, emp_estado: 'ACTIVE' },
+      const register = await this.prisma.mar_emp_empleados.update({
+        where: { emp_codigo: id, emp_estado: 'ACTIVE' },
         data: {
           emp_estado: 'INACTIVE',
           emp_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,

@@ -4,7 +4,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/users/decorators';
-import { marca_usr_usuario } from '@prisma/client'; 
+import { mar_usr_usuario } from '@prisma/client'; 
 import { HEADER_API_BEARER_AUTH } from 'src/common/const'; 
 
 @ApiTags('Companies')
@@ -18,7 +18,7 @@ export class CompaniesController {
   @ApiResponse({ status: 201, description: 'Empresa creada' })
   create(
     @Body() createCompanyDto: CreateCompanyDto,
-    @GetUser() user: marca_usr_usuario
+    @GetUser() user: mar_usr_usuario
   ) {
     return this.companiesService.create(createCompanyDto, user);
   }
@@ -38,14 +38,14 @@ export class CompaniesController {
   @Put(':id')
   @ApiResponse({ status: 200, description: 'Empresa Actualizada' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateCompanyDto: UpdateCompanyDto,
-    @GetUser() user: marca_usr_usuario) {
+    @GetUser() user: mar_usr_usuario) {
     return this.companiesService.update(id, updateCompanyDto, user);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'Empresa eliminada' })
   remove(@Param('id', ParseUUIDPipe) id: string,
-    @GetUser() user: marca_usr_usuario) {
+    @GetUser() user: mar_usr_usuario) {
     return this.companiesService.remove(id, user);
   }
 }

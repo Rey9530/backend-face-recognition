@@ -7,17 +7,18 @@ import {
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/common/services';
-import { marca_ctr_contratos, marca_usr_usuario } from '@prisma/client';
+import {  mar_ctr_contratos, mar_usr_usuario } from '@prisma/client';
+import { convert_date } from 'src/common/helpers/conver_date.heper';
 
 @Injectable()
 export class ContractsService {
   private readonly logger = new Logger('EmployesService');
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createProjectDto: CreateProjectDto, user: marca_usr_usuario) {
-    var ctr_fecha_inicio = new Date(createProjectDto.ctr_fecha_inicio);
-    var ctr_fecha_fin = new Date(createProjectDto.ctr_fecha_fin);
+  async create(createProjectDto: CreateProjectDto, user: mar_usr_usuario) {
+    var ctr_fecha_inicio = convert_date(createProjectDto.ctr_fecha_inicio);
+    var ctr_fecha_fin = convert_date(createProjectDto.ctr_fecha_fin);
 
     ctr_fecha_fin.setHours(ctr_fecha_fin.getHours() + 23);
     ctr_fecha_fin.setMinutes(ctr_fecha_fin.getMinutes() + 59);
@@ -27,29 +28,36 @@ export class ContractsService {
       );
     }
     try {
-      var data: any = {
+      var data = {
         ctr_nombre: createProjectDto.ctr_nombre,
-        ctr_numero_contrato: createProjectDto.ctr_numero_contrato,
+        ctr_num_contrato: createProjectDto.ctr_numero_contrato,
         ctr_fecha_inicio,
         ctr_fecha_fin,
         ctr_usrcrea: user.usr_nombres + ' ' + user.usr_apellidos,
         ctr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
-        marca_ctr_empre_fk: createProjectDto.marca_ctr_empre,
+        ctr_codepr: createProjectDto.marca_ctr_empre,
         ctr_horas_extras: createProjectDto.horas_extras,
-        ctr_fecha_inicio_pro: createProjectDto.ctr_fecha_inicio_pro != null ? new Date(createProjectDto.ctr_fecha_inicio_pro) : null,
-        ctr_fecha_fin_pro: createProjectDto.ctr_fecha_fin_pro != null ? new Date(createProjectDto.ctr_fecha_fin_pro) : null,
-      };
-      return await this.prisma.marca_ctr_contratos.create({ data });
+        ctr_fecha_inipro:
+          createProjectDto.ctr_fecha_inicio_pro != null
+            ? convert_date(createProjectDto.ctr_fecha_inicio_pro)
+            : null,
+        ctr_fecha_finpro:
+          createProjectDto.ctr_fecha_fin_pro != null
+            ? convert_date(createProjectDto.ctr_fecha_fin_pro)
+            : null,
+      }; 
+      return await this.prisma.mar_ctr_contratos.create({ data });
     } catch (error) {
+      console.log(error.toString());
       return error;
     }
   }
 
   async findAll() {
     try {
-      return await this.prisma.marca_ctr_contratos.findMany({
+      return await this.prisma.mar_ctr_contratos.findMany({
         where: { ctr_estado: 'ACTIVE' },
-        include: { marca_empre_empresas: { select: { empre_nombre: true } } }
+        include: { mar_epr_empresas: { select: { epr_nombre: true } } },
       });
     } catch (error) {
       return error;
@@ -58,8 +66,8 @@ export class ContractsService {
 
   async findOne(id: string) {
     try {
-      var respDb = await this.prisma.marca_ctr_contratos.findFirst({
-        where: { marca_ctr_pk: id, ctr_estado: 'ACTIVE' },
+      var respDb = await this.prisma.mar_ctr_contratos.findFirst({
+        where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
       });
     } catch (error) {
       return error;
@@ -72,11 +80,11 @@ export class ContractsService {
   async update(
     id: string,
     updateProjectDto: UpdateProjectDto,
-    user: marca_usr_usuario,
+    user: mar_usr_usuario,
   ) {
     await this.findOne(id);
-    var ctr_fecha_inicio = new Date(updateProjectDto.ctr_fecha_inicio);
-    var ctr_fecha_fin = new Date(updateProjectDto.ctr_fecha_fin);
+    var ctr_fecha_inicio = convert_date(updateProjectDto.ctr_fecha_inicio);
+    var ctr_fecha_fin = convert_date(updateProjectDto.ctr_fecha_fin);
     ctr_fecha_fin.setHours(ctr_fecha_fin.getHours() + 23);
     ctr_fecha_fin.setMinutes(ctr_fecha_fin.getMinutes() + 59);
     if (ctr_fecha_inicio.getTime() > ctr_fecha_fin.getTime()) {
@@ -87,14 +95,23 @@ export class ContractsService {
     try {
       var data: any = {
         ctr_nombre: updateProjectDto.ctr_nombre,
-        ctr_numero_contrato: updateProjectDto.ctr_numero_contrato,
+        ctr_num_contrato: updateProjectDto.ctr_numero_contrato,
         ctr_fecha_inicio,
         ctr_fecha_fin,
         ctr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
-        marca_ctr_empre_fk: updateProjectDto.marca_ctr_empre,
+        ctr_codepr: updateProjectDto.marca_ctr_empre, 
+        ctr_horas_extras: updateProjectDto.horas_extras,
+        ctr_fecha_inipro:
+          updateProjectDto.ctr_fecha_inicio_pro != null
+            ? convert_date(updateProjectDto.ctr_fecha_inicio_pro)
+            : null,
+        ctr_fecha_finpro:
+          updateProjectDto.ctr_fecha_fin_pro != null
+            ? convert_date(updateProjectDto.ctr_fecha_fin_pro)
+            : null,
       };
-      var respDb = await this.prisma.marca_ctr_contratos.update({
-        where: { marca_ctr_pk: id, ctr_estado: 'ACTIVE' },
+      var respDb = await this.prisma.mar_ctr_contratos.update({
+        where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
         data,
       });
       if (!respDb) throw new NotFoundException('Registro no encontrado');
@@ -104,13 +121,15 @@ export class ContractsService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, user: mar_usr_usuario) {
     await this.findOne(id);
     try {
-      var data: any = { ctr_estado: 'INACTIVE' };
-      var respDb = await this.prisma.marca_ctr_contratos.update({
-        where: { marca_ctr_pk: id, ctr_estado: 'ACTIVE' },
-        data,
+      var respDb = await this.prisma.mar_ctr_contratos.update({
+        where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
+        data: {
+          ctr_estado: 'INACTIVE',
+          ctr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
+        },
       });
     } catch (error) {
       return error;
