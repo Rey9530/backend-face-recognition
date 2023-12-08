@@ -16,8 +16,8 @@ import { Auth, GetUser } from 'src/users/decorators';
 import { marca_usr_usuario } from '@prisma/client'; 
 import { HEADER_API_BEARER_AUTH } from 'src/common/const';
 
-@ApiTags('Projects')
-@Controller('v1/projects')
+@ApiTags('Contracts')
+@Controller('v1/contracts')
 @Auth()
 @ApiBearerAuth(HEADER_API_BEARER_AUTH)
 export class ContractsController {

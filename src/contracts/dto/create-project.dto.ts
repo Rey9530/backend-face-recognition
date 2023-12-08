@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, Matches, MinLength } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, IsString, IsUUID, Matches, MinLength } from 'class-validator';
 import { FORMAT_FECHA_DD_MM_YYYY } from 'src/common/const';
 
 export class CreateProjectDto {
@@ -7,12 +7,17 @@ export class CreateProjectDto {
   @ApiProperty({})
   @IsString()
   @MinLength(4)
-  proy_nombre: string;
+  ctr_nombre: string;
 
   @ApiProperty({})
   @IsString()
   @MinLength(4)
-  proy_numero_contrato: string;
+  ctr_numero_contrato: string;
+
+  @ApiProperty({})
+  @IsInt()
+  @IsPositive()
+  horas_extras: number;
 
   @ApiProperty()
   @IsString()
@@ -20,7 +25,7 @@ export class CreateProjectDto {
   @Matches(FORMAT_FECHA_DD_MM_YYYY, {
     message: 'La fecha de inicio es incorrecta debe ser  YYYY-mm-dd',
   })
-  proy_fecha_inicio: string;
+  ctr_fecha_inicio: string;
   
   @ApiProperty()
   @IsString()
@@ -28,9 +33,25 @@ export class CreateProjectDto {
   @Matches(FORMAT_FECHA_DD_MM_YYYY, {
     message: 'La fecha de fin incorrecta debe ser YYYY-mm-dd',
   })
-  proy_fecha_fin: string;
+  ctr_fecha_fin: string;
+
+  @ApiProperty()
+  @IsString() 
+  @IsOptional() 
+  @Matches(FORMAT_FECHA_DD_MM_YYYY, {
+    message: 'La fecha de inicio es incorrecta debe ser  YYYY-mm-dd',
+  })
+  ctr_fecha_inicio_pro: string;
+  
+  @ApiProperty()
+  @IsString() 
+  @IsOptional() 
+  @Matches(FORMAT_FECHA_DD_MM_YYYY, {
+    message: 'La fecha de fin incorrecta debe ser YYYY-mm-dd',
+  })
+  ctr_fecha_fin_pro: string;
 
   @ApiProperty()
   @IsUUID('all', { message: 'La empresa seleccionada no es valida' })
-  marca_proy_empre: string;
+  marca_ctr_empre: string;
 }

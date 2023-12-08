@@ -111,7 +111,7 @@ model marca_ctr_contratos {
   marca_ctr_pk         String               @id @default(uuid())
   ctr_nombre           String
   ctr_numero_contrato  String
-  horas_extras         Int                  @db.Integer
+  ctr_horas_extras         Int                  @db.Integer
   ctr_fecha_inicio     DateTime
   ctr_fecha_fin        DateTime
   ctr_fecha_inicio_pro DateTime?
