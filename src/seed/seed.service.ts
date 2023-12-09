@@ -178,10 +178,10 @@ export class SeedService {
 
       var usuario = await this.prisma.mar_usr_usuario.create({
         data: {
-          usr_codigo_emple: '12345678',
+          usr_codigo_emple: '9505002',
           usr_nombres: 'Usuario',
           usr_apellidos: 'Administrador',
-          usr_contrasenia: bcrypt.hashSync('12345678', 10),
+          usr_contrasenia: bcrypt.hashSync('9505002', 10),
           usr_usrcrea: cremod,
           usr_usrmod: cremod,
         },
