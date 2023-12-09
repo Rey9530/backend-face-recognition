@@ -7,14 +7,14 @@ import {
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/common/services';
-import {  mar_ctr_contratos, mar_usr_usuario } from '@prisma/client';
+import { mar_ctr_contratos, mar_usr_usuario } from '@prisma/client';
 import { convert_date } from 'src/common/helpers/conver_date.heper';
 
 @Injectable()
 export class ContractsService {
   private readonly logger = new Logger('EmployesService');
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createProjectDto: CreateProjectDto, user: mar_usr_usuario) {
     var ctr_fecha_inicio = convert_date(createProjectDto.ctr_fecha_inicio);
@@ -45,7 +45,7 @@ export class ContractsService {
           createProjectDto.ctr_fecha_fin_pro != null
             ? convert_date(createProjectDto.ctr_fecha_fin_pro)
             : null,
-      }; 
+      };
       return await this.prisma.mar_ctr_contratos.create({ data });
     } catch (error) {
       console.log(error.toString());
@@ -68,6 +68,7 @@ export class ContractsService {
     try {
       var respDb = await this.prisma.mar_ctr_contratos.findFirst({
         where: { ctr_codigo: id, ctr_estado: 'ACTIVE' },
+        include: { mar_epr_empresas: { select: { epr_nombre: true, epr_codigo: true, } } },
       });
     } catch (error) {
       return error;
@@ -105,7 +106,7 @@ export class ContractsService {
         ctr_fecha_inicio,
         ctr_fecha_fin,
         ctr_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
-        ctr_codepr: updateProjectDto.marca_ctr_empre, 
+        ctr_codepr: updateProjectDto.marca_ctr_empre,
         ctr_horas_extras: updateProjectDto.horas_extras,
         ctr_fecha_inipro:
           updateProjectDto.ctr_fecha_inicio_pro != null
