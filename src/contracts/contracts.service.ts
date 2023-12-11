@@ -83,6 +83,16 @@ export class ContractsService {
     return asignacion;
 
   }
+  async updateSchedule(asiCode: string,codHor: string,user: mar_usr_usuario){
+    var data:any = { 
+      asi_usrmod: user.usr_nombres + ' ' + user.usr_apellidos,
+      asi_codhor: codHor, 
+    };
+    return this.prisma.mar_asi_asignacion.update({
+      where:{ asi_codigo:asiCode },
+      data
+    });
+  }
   async createSchedule(createScheduleDto: CreateScheduleDto, user: mar_usr_usuario, id: string) { //TODO: Terminar de agregar validaciones
     try {
       var contract = await this.prisma.mar_ctr_contratos.findFirst({

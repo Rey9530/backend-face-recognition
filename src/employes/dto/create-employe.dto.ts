@@ -10,8 +10,7 @@ export class CreateEmployeDto {
   emp_codigo: string;
 
   @ApiProperty()
-  @IsString()
-  @MinLength(4)
+  @IsString() 
   @Matches(FORMAT_FECHA_DD_MM_YYYY, {
     message: 'La fecha es incorrecta debe ser dd/mm/YYYY',
   })
@@ -55,4 +54,22 @@ export class CreateEmployeDto {
   @IsUUID('all', { message: 'El horario es incorrecto' })
   @IsOptional()
   marca_asig_hour: string;
+
+
+
+  @ApiProperty()
+  @IsString() 
+  @Matches(FORMAT_FECHA_DD_MM_YYYY, {
+    message: 'La fecha es incorrecta debe ser dd/mm/YYYY',
+  })
+  emp_fecha_pro_incio: string;
+
+
+
+  @ApiProperty()
+  @IsString() 
+  @Matches(FORMAT_FECHA_DD_MM_YYYY, {
+    message: 'La fecha es incorrecta debe ser dd/mm/YYYY',
+  })
+  emp_fecha_pro_fin: string;
 }

@@ -44,6 +44,16 @@ export class ContractsController {
     return this.projectsService.createSchedule(createScheduleDto, user, id);
   }
 
+  @Put("schedule/:asiCode/:codHor")
+  updateSchedule(
+    @Param('asiCode', ParseUUIDPipe) asiCode: string, 
+    @Param('codHor', ParseUUIDPipe) codHor: string, 
+    @GetUser() user: mar_usr_usuario,
+  ) {
+    return this.projectsService.updateSchedule(asiCode, codHor,user);
+  }
+
+
 
   @Post("employe/:idCtr/:idEmp")
   addEmployeToContract(
