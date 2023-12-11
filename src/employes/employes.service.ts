@@ -23,7 +23,7 @@ export class EmployesService {
     user: mar_usr_usuario,
   ): Promise<any> {
     var emp_fecha_nacimiento = convert_date(
-      createEmployeDto.emp_fecha_nacimiento
+      createEmployeDto.emp_fecha_nacimiento,
     );
     var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
     var data: any = {
@@ -46,16 +46,17 @@ export class EmployesService {
 
       if (
         createEmployeDto.marca_asig_proy &&
-        isUUID(createEmployeDto.marca_asig_proy)
+        isUUID(createEmployeDto.marca_asig_proy) &&
+        isUUID(createEmployeDto.marca_asig_hour)
       ) {
-        //TODO: Agregar validacion de identificar si existe la empresa
-        // var proyecto: any = {
-        //   asi_usrcrea: usuariosName,
-        //   asi_usrmod: usuariosName,
-        //   asi_codemp: employe.emp_codigo,
-        //   asi_codhor: ''
-        // };
-        // await this.prisma.mar_asi_asignacion.create({ data: proyecto });
+        //TODO: Agregar validacion para verificar si existe el horarrio
+        var contract: any = {
+          asi_usrcrea: usuariosName,
+          asi_usrmod: usuariosName,
+          asi_codemp: employe.emp_codigo,
+          asi_codhor: createEmployeDto.marca_asig_hour, 
+        };
+        await this.prisma.mar_asi_asignacion.create({ data: contract });
       }
       return employe;
     } catch (error) {
@@ -68,6 +69,26 @@ export class EmployesService {
     return await this.prisma.mar_ubi_ubicaciones.findMany({
       where: { ubi_estado: 'ACTIVE' },
       select: { ubi_codigo: true, ubi_nombre: true },
+    });
+  }
+
+  async getContracts(idEmp: string, user: mar_usr_usuario) {
+    return await this.prisma.mar_ctr_contratos.findMany({
+      where: {
+        ctr_estado: 'ACTIVE',
+        ctr_codepr: idEmp,
+        ctr_codusr: user.usr_codigo,
+      },
+      select: { ctr_codigo: true, ctr_nombre: true },
+    });
+  }
+  async getHoursContracts(idCtr: string) {
+    return await this.prisma.mar_hor_horarios.findMany({
+      where: {
+        hor_estado: 'ACTIVE',
+        hor_codctro: idCtr, 
+      },
+      select: { hor_codigo: true, hor_nombre: true },
     });
   }
 
@@ -178,7 +199,17 @@ export class EmployesService {
       where: { emp_estado: 'ACTIVE', emp_codigo: id },
       include: {
         mar_gen_generos: true,
-        mar_asi_asignacion: true,
+        mar_asi_asignacion: {
+          select: {
+            mar_hor_horarios: {
+              select: {
+                mar_ctr_contratos: {
+                  select: { ctr_nombre: true, ctr_codigo: true },
+                },
+              },
+            },
+          },
+        },
         mar_con_contrataciones: true,
         mar_ubi_ubicaciones: true,
       },
@@ -195,9 +226,9 @@ export class EmployesService {
     var usuariosName = user.usr_nombres + ' ' + user.usr_apellidos;
     await this.findOne(id);
     var emp_fecha_nacimiento = convert_date(
-      updateEmployeDto.emp_fecha_nacimiento
+      updateEmployeDto.emp_fecha_nacimiento,
     );
-    var data: any = { 
+    var data: any = {
       emp_codgen: updateEmployeDto.marca_emp_gen,
       emp_codubi: updateEmployeDto.marca_emp_ubi,
       emp_codcon: updateEmployeDto.marca_emp_cn,
@@ -209,7 +240,7 @@ export class EmployesService {
       emp_codigo_emp: updateEmployeDto.emp_codigo,
       emp_fecha_nacimiento,
       emp_nombres: updateEmployeDto.emp_nombres,
-      emp_apellidos: updateEmployeDto.emp_apellidos, 
+      emp_apellidos: updateEmployeDto.emp_apellidos,
     };
     try {
       const register = await this.prisma.mar_emp_empleados.update({

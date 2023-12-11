@@ -48,4 +48,11 @@ export class CreateEmployeDto {
   @IsUUID('all', { message: 'El proyecto es incorrecto' })
   @IsOptional()
   marca_asig_proy: string;
+
+
+
+  @ApiProperty()
+  @IsUUID('all', { message: 'El horario es incorrecto' })
+  @IsOptional()
+  marca_asig_hour: string;
 }

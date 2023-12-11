@@ -34,38 +34,47 @@ export class EmployesController {
   ): Promise<CreateEmployeDto> {
     return this.employesService.create(createEmployeDto, user);
   }
-  @Post("generatecode")
-  generateCode(
-    @Body() codeEmploye: CodeEmployeDto, 
-  ): Promise<any> {
+  @Post('generatecode')
+  generateCode(@Body() codeEmploye: CodeEmployeDto): Promise<any> {
     return this.employesService.generateCode(codeEmploye);
   }
 
   @Get()
-  findAll(
-    @Query() codeEmploye: PaginationDto, 
-  ) {
+  findAll(@Query() codeEmploye: PaginationDto) {
     return this.employesService.findAll(codeEmploye);
   }
 
-  @Get("get/catalogs")
+  @Get('get/catalogs')
   getCatalogs() {
     return this.employesService.getCatalogs();
   }
 
+  @Get('get/contracts/:id')
+  getContracts(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: mar_usr_usuario,
+  ) {
+    return this.employesService.getContracts(id,user);
+  }
 
-  @Get("get/sedes")
+  @Get('get/contracts/hours/:id')
+  getHoursContracts(
+    @Param('id', ParseUUIDPipe) id: string, 
+  ) {
+    return this.employesService.getHoursContracts(id);
+  }
+
+  @Get('get/sedes')
   getSedes() {
     return this.employesService.getSedes();
   }
 
-
-  @Get("get/gender")
+  @Get('get/gender')
   getGender() {
     return this.employesService.getGender();
   }
 
-  @Get("get/contratation")
+  @Get('get/contratation')
   getContratation() {
     return this.employesService.getContratation();
   }
