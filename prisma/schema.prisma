@@ -67,8 +67,6 @@ model mar_epr_empresas {
   epr_feccrea           DateTime            @default(now())
   epr_fecmod            DateTime            @default(now()) @db.Timestamptz()
   epr_estado            Estado              @default(ACTIVE)
-  epr_codusr            String
-  mar_usr_usuario       mar_usr_usuario     @relation(fields: [epr_codusr], references: [usr_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_epr_usr_fk")
   mar_ctr_contratos     mar_ctr_contratos[]
 }
 
@@ -78,7 +76,7 @@ model mar_emp_empleados {
   emp_fecha_nacimiento   DateTime               @db.Date()
   emp_nombres            String
   emp_apellidos          String
-  emp_estado             Estado                 @default(ACTIVE) 
+  emp_estado             Estado                 @default(ACTIVE)
   emp_feccrea            DateTime               @default(now())
   emp_fecmod             DateTime               @default(now()) @db.Timestamptz()
   emp_usrcrea            String
@@ -94,17 +92,17 @@ model mar_emp_empleados {
 }
 
 model mar_usr_usuario {
-  usr_codigo       String             @id(map: "mar_usr_pk") @default(uuid())
-  usr_codigo_emple String
-  usr_nombres      String
-  usr_apellidos    String
-  usr_contrasenia  String
-  usr_estado       Estado             @default(ACTIVE)
-  usr_feccrea      DateTime           @default(now())
-  usr_fecmod       DateTime           @default(now()) @db.Timestamptz()
-  usr_usrcrea      String
-  usr_usrmod       String
-  mar_epr_empresas mar_epr_empresas[]
+  usr_codigo        String              @id(map: "mar_usr_pk") @default(uuid())
+  usr_codigo_emple  String
+  usr_nombres       String
+  usr_apellidos     String
+  usr_contrasenia   String
+  usr_estado        Estado              @default(ACTIVE)
+  usr_feccrea       DateTime            @default(now())
+  usr_fecmod        DateTime            @default(now()) @db.Timestamptz()
+  usr_usrcrea       String
+  usr_usrmod        String
+  mar_ctr_contratos mar_ctr_contratos[]
 }
 
 model mar_ctr_contratos {
@@ -123,6 +121,8 @@ model mar_ctr_contratos {
   ctr_usrmod       String
   ctr_codepr       String
   mar_epr_empresas mar_epr_empresas   @relation(fields: [ctr_codepr], references: [epr_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_ctr_epr_fk")
+  ctr_codusr       String
+  mar_usr_usuario  mar_usr_usuario    @relation(fields: [ctr_codusr], references: [usr_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_ctr_usr_fk")
   mar_hor_horarios mar_hor_horarios[]
 }
 
@@ -146,10 +146,10 @@ model mar_hde_detalle_ho {
   mar_hor_horarios mar_hor_horarios @relation(fields: [hde_codhor], references: [hor_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_hde_hor_fk")
   hor_coddia       String
   mar_dia_dias     mar_dia_dias     @relation(fields: [hor_coddia], references: [dia_codigo], onDelete: NoAction, onUpdate: NoAction, map: "mar_hor_dia_fk")
-  hde_inicio_1     DateTime         @db.Time()
-  hde_fin_1        DateTime         @db.Time()
-  hde_inicio_2     DateTime         @db.Time()
-  hde_fin_2        DateTime         @db.Time()
+  hde_inicio_1     String
+  hde_fin_1        String
+  hde_inicio_2     String
+  hde_fin_2        String
   hde_estado       Estado           @default(ACTIVE)
   hde_feccrea      DateTime         @default(now())
   hde_fecmod       DateTime         @default(now()) @db.Timestamptz()

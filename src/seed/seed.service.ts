@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 export class SeedService {
   private readonly logger = new Logger('UsersService');
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
   async deleteSeed() {
     await this.prisma.mar_emp_empleados.deleteMany();
     await this.prisma.mar_epr_empresas.deleteMany();
@@ -94,44 +94,44 @@ export class SeedService {
       await this.prisma.mar_dia_dias.createMany({
         data: [
           {
+            dia_nombre: 'Domingo',
+            dia_dia_codigo: '0',
+            dia_usrmod: cremod,
+            dia_usrcrea: cremod,
+          },
+          {
             dia_nombre: 'Lunes',
-            dia_dia_codigo: 'LU',
+            dia_dia_codigo: '1',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Martes',
-            dia_dia_codigo: 'MA',
+            dia_dia_codigo: '2',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Miercoles',
-            dia_dia_codigo: 'MI',
+            dia_dia_codigo: '3',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Jueves',
-            dia_dia_codigo: 'JU',
+            dia_dia_codigo: '4',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Viernes',
-            dia_dia_codigo: 'VI',
+            dia_dia_codigo: '5',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
           {
             dia_nombre: 'Sabado',
-            dia_dia_codigo: 'SA',
-            dia_usrmod: cremod,
-            dia_usrcrea: cremod,
-          },
-          {
-            dia_nombre: 'Domingo',
-            dia_dia_codigo: 'DO',
+            dia_dia_codigo: '6',
             dia_usrmod: cremod,
             dia_usrcrea: cremod,
           },
@@ -195,8 +195,7 @@ export class SeedService {
           epr_contacto_correo: 'demo@demo.com',
           epr_contacto_telefono: '+50365326545',
           epr_usrcrea: cremod,
-          epr_usrmod: cremod,
-          epr_codusr : usuario.usr_codigo,
+          epr_usrmod: cremod, 
         },
       });
 

@@ -1,15 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsPositive, IsString, IsUUID, Matches, MinLength } from 'class-validator';
-import { FORMAT_FECHA_YYYY_MM_DD } from 'src/common/const';
+import { IsOptional, IsString, } from 'class-validator';
 
 export class PaginationDto {
   @ApiProperty()
-  @IsString() 
+  @IsString()
   page: string;
 
 
   @ApiProperty()
-  @IsString() 
+  @IsString()
   quantity: string;
 
 
